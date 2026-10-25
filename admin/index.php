@@ -253,11 +253,13 @@ unset($_SESSION['admin_password_reset_notice']);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= $setupMode ? 'Set up admin' : 'Admin sign in' ?> | KABC Hotel</title>
     <link rel="stylesheet" href="../assets/css/admin.css">
+    <link rel="icon" type="image/png" href="../img/icon.png">
 </head>
 <body class="login-page">
     <main class="login-card">
-        <a class="admin-brand login-brand" href="../full_menu">KABC <span>ADMIN</span></a>
-        <p class="eyebrow">KABC HOTEL</p>
+        <a class="admin-brand login-brand" href="../full_menu">
+            <img src="../img/icon.png" alt="KABC Hotel logo">
+        </a>
         <h1><?= $setupMode ? 'Create your admin account' : 'Welcome back' ?></h1>
         <p class="muted">
             <?= $setupMode
@@ -282,15 +284,15 @@ unset($_SESSION['admin_password_reset_notice']);
             <input type="hidden" name="csrf_token" value="<?= adminEscape(adminCsrfToken()) ?>">
             <input type="hidden" name="action" value="<?= $setupMode ? 'setup' : 'login' ?>">
             <label for="username">Username</label>
-            <input id="username" name="username" type="text" minlength="3" maxlength="64" autocomplete="username" required value="<?= adminEscape($_POST['username'] ?? '') ?>">
+            <input id="username" name="username" type="text" minlength="3" placeholder="Enter username" maxlength="64" autocomplete="username" required value="<?= adminEscape($_POST['username'] ?? '') ?>">
 
             <?php if ($setupMode): ?>
                 <label for="email">Email <span class="muted">(optional)</span></label>
-                <input id="email" name="email" type="email" maxlength="190" autocomplete="email" value="<?= adminEscape($_POST['email'] ?? '') ?>">
+                <input id="email" name="email" type="email" maxlength="190" placeholder="Enter email" autocomplete="email" value="<?= adminEscape($_POST['email'] ?? '') ?>">
             <?php endif; ?>
 
             <label for="password"><?= $setupMode ? 'Password (12+ characters)' : 'Password' ?></label>
-            <input id="password" name="password" type="password" minlength="<?= $setupMode ? '12' : '1' ?>" autocomplete="<?= $setupMode ? 'new-password' : 'current-password' ?>" required>
+            <input id="password" name="password" type="password" placeholder="Enter password" minlength="<?= $setupMode ? '12' : '1' ?>" autocomplete="<?= $setupMode ? 'new-password' : 'current-password' ?>" required>
 
             <button class="button primary full-width" type="submit"><?= $setupMode ? 'Create admin account' : 'Sign in' ?></button>
         </form>
