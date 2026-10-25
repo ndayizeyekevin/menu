@@ -27,4 +27,4 @@
         </div>
     </div>
 </aside>
-<script src="../assets/js/admin_sidebar.js?v=2"></script>
+<script src="../assets/js/admin_sidebar.js?v=3"></script>

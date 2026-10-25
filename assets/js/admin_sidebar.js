@@ -9,6 +9,7 @@
     function setExpanded(expanded) {
         toggle.setAttribute('aria-expanded', String(expanded));
         toggle.setAttribute('aria-label', expanded ? 'Close admin navigation' : 'Open admin navigation');
+        toggle.querySelector('.sidebar-toggle-icon').textContent = expanded ? '×' : '☰';
         toggle.closest('.admin-sidebar').classList.toggle('menu-open', expanded);
     }
 
