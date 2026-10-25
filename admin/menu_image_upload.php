@@ -1,28 +1,58 @@
 <?php
-require_once __DIR__ . '/includes/DBController.php';
+require_once __DIR__ . '/../includes/DBController.php';
 
 session_start();
 
+$csrfSessionKey = 'menu_image_upload_csrf';
+if (!isset($_SESSION[$csrfSessionKey])) {
+    $_SESSION[$csrfSessionKey] = bin2hex(random_bytes(32));
+}
+$csrfToken = $_SESSION[$csrfSessionKey];
+
 $message = '';
 $messageClass = '';
-$uploadDir = __DIR__ . '/uploads';
+$uploadDir = __DIR__ . '/../uploads';
 $uploadUrlPath = 'uploads';
+$maxUploadSize = 5 * 1024 * 1024;
 
-function setFlashMessage(string $message, string $class = 'success'): void {
+function setFlashMessage(string $message, string $class = 'success'): void
+{
     $_SESSION['menu_image_upload_flash'] = ['message' => $message, 'class' => $class];
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $menuId = isset($_POST['menu_id']) ? trim($_POST['menu_id']) : '';
+    $postedToken = $_POST['csrf_token'] ?? '';
+    $menuId = isset($_POST['menu_id']) && is_string($_POST['menu_id'])
+        ? trim($_POST['menu_id'])
+        : '';
+    $file = $_FILES['menu_image'] ?? null;
 
-    if ($menuId === '') {
+    if (!is_string($postedToken) || !hash_equals($csrfToken, $postedToken)) {
+        $message = 'Your session has expired. Please try again.';
+        $messageClass = 'error';
+    } elseif ($menuId === '') {
         $message = 'Please select a menu item.';
         $messageClass = 'error';
-    } elseif (empty($_FILES['menu_image']) || $_FILES['menu_image']['error'] !== UPLOAD_ERR_OK) {
-        $message = 'Please choose an image file to upload.';
+    } elseif (!is_array($file) || !isset($file['error']) || !is_int($file['error']) || $file['error'] !== UPLOAD_ERR_OK) {
+        $uploadError = is_array($file) && isset($file['error']) && is_int($file['error'])
+            ? $file['error']
+            : UPLOAD_ERR_NO_FILE;
+        $message = in_array($uploadError, [UPLOAD_ERR_INI_SIZE, UPLOAD_ERR_FORM_SIZE], true)
+            ? 'The image must be 5 MB or smaller.'
+            : 'Please choose a valid image file to upload.';
+        $messageClass = 'error';
+    } elseif (
+        !isset($file['tmp_name'], $file['size'])
+        || !is_string($file['tmp_name'])
+        || !is_int($file['size'])
+        || !is_uploaded_file($file['tmp_name'])
+    ) {
+        $message = 'The uploaded file could not be verified. Please try again.';
+        $messageClass = 'error';
+    } elseif ($file['size'] <= 0 || $file['size'] > $maxUploadSize) {
+        $message = 'The image must be larger than 0 bytes and no larger than 5 MB.';
         $messageClass = 'error';
     } else {
-        $file = $_FILES['menu_image'];
         $allowedMimeTypes = [
             'image/jpeg' => 'jpg',
             'image/png' => 'png',
@@ -30,26 +60,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'image/webp' => 'webp',
         ];
 
-        $fileInfo = getimagesize($file['tmp_name']);
-        $mimeType = $fileInfo['mime'] ?? '';
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        $mimeType = $finfo === false ? false : finfo_file($finfo, $file['tmp_name']);
+        if ($finfo !== false) {
+            finfo_close($finfo);
+        }
+        $imageInfo = getimagesize($file['tmp_name']);
 
-        if (!isset($allowedMimeTypes[$mimeType])) {
+        if (
+            !is_array($imageInfo)
+            || $mimeType === false
+            || !isset($allowedMimeTypes[$mimeType])
+            || ($imageInfo['mime'] ?? '') !== $mimeType
+        ) {
             $message = 'Only JPG, PNG, GIF, and WEBP image files are allowed.';
             $messageClass = 'error';
+        } elseif (!is_dir($uploadDir) && !mkdir($uploadDir, 0755, true) && !is_dir($uploadDir)) {
+            error_log('Unable to create menu image upload directory: ' . $uploadDir);
+            $message = 'The upload folder is unavailable. Please contact the site administrator.';
+            $messageClass = 'error';
         } else {
-            if (!is_dir($uploadDir)) {
-                mkdir($uploadDir, 0755, true);
-            }
-
             $fileExt = $allowedMimeTypes[$mimeType];
-            $safeMenuId = preg_replace('/[^a-zA-Z0-9_-]/', '', $menuId);
-            $baseName = 'menu_' . $safeMenuId . '_' . time();
-            $targetName = $baseName . '.' . $fileExt;
+            $targetName = 'menu_' . bin2hex(random_bytes(16)) . '.' . $fileExt;
             $targetPath = $uploadDir . '/' . $targetName;
             $relativePath = $uploadUrlPath . '/' . $targetName;
 
             if (!move_uploaded_file($file['tmp_name'], $targetPath)) {
-                $message = 'Upload failed. Please check folder permissions on ./uploads.';
+                error_log('Unable to move uploaded menu image to: ' . $targetPath);
+                $message = 'The image could not be saved. Please try again or contact the site administrator.';
                 $messageClass = 'error';
             } else {
                 try {
@@ -63,26 +101,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         $message = 'Image uploaded successfully and menu item updated.';
                         $messageClass = 'success';
                     } else {
-                        $message = 'Menu item not found or image path unchanged.';
+                        if (is_file($targetPath) && !unlink($targetPath)) {
+                            error_log('Unable to remove unreferenced menu image: ' . $targetPath);
+                        }
+                        $message = 'The selected menu item could not be updated.';
                         $messageClass = 'error';
                     }
                 } catch (PDOException $e) {
-                    $message = 'Database error: ' . htmlspecialchars($e->getMessage(), ENT_QUOTES, 'UTF-8');
+                    error_log('Menu image database update failed: ' . $e->getMessage());
+                    if (is_file($targetPath) && !unlink($targetPath)) {
+                        error_log('Unable to remove menu image after database update failure: ' . $targetPath);
+                    }
+                    $message = 'The image could not be linked to the menu item. Please try again.';
                     $messageClass = 'error';
                 }
             }
         }
     }
-}
 
-try {
-    $menuStmt = $db->prepare('SELECT menu_id, menu_name, image_path FROM menu ORDER BY menu_name ASC');
-    $menuStmt->execute();
-    $menuItems = $menuStmt->fetchAll(PDO::FETCH_ASSOC);
-} catch (PDOException $e) {
-    $menuItems = [];
-    setFlashMessage('Unable to load menu items: ' . htmlspecialchars($e->getMessage(), ENT_QUOTES, 'UTF-8'), 'error');
-    header('Location: ' . $_SERVER['PHP_SELF']);
+    setFlashMessage($message, $messageClass);
+    $redirectPath = parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH);
+    if (!is_string($redirectPath) || $redirectPath === '') {
+        $redirectPath = $_SERVER['SCRIPT_NAME'];
+    }
+    header('Location: ' . $redirectPath, true, 303);
     exit;
 }
 
@@ -92,6 +134,18 @@ if (!empty($_SESSION['menu_image_upload_flash'])) {
     $messageClass = $flash['class'];
     unset($_SESSION['menu_image_upload_flash']);
 }
+
+try {
+    $menuStmt = $db->prepare('SELECT menu_id, menu_name, image_path FROM menu ORDER BY menu_name ASC');
+    $menuStmt->execute();
+    $menuItems = $menuStmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    $menuItems = [];
+    error_log('Unable to load menu items for image upload: ' . $e->getMessage());
+    http_response_code(500);
+    $message = 'Menu items could not be loaded. Please try again later.';
+    $messageClass = 'error';
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -99,174 +153,33 @@ if (!empty($_SESSION['menu_image_upload_flash'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Upload Menu Image</title>
-    <link rel="icon" type="image/png" href="./img/icon.png">
-    <link href="assets/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="icon" type="image/png" href="../img/icon.png">
+    <link href="../assets/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-rc.0/css/select2.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg: #0f1115;
-            --panel: #161a1f;
-            --text: #eef2f7;
-            --muted: #a1a8b8;
-            --green: #2ecc71;
-            --green-dark: #1a7a3e;
-            --border: rgba(255,255,255,0.08);
-        }
-        * { box-sizing: border-box; }
-        body {
-            margin: 0;
-            font-family: 'Inter', sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            min-height: 100vh;
-        }
-        .page-wrapper {
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 24px;
-        }
-        .panel {
-            background: var(--panel);
-            border: 1px solid var(--border);
-            border-radius: 18px;
-            padding: 28px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.18);
-        }
-        h1 {
-            margin: 0 0 12px;
-            font-size: 2.4rem;
-            letter-spacing: 0.03em;
-        }
-        .page-subtitle {
-            margin: 0 0 24px;
-            color: var(--muted);
-            font-size: 0.98rem;
-        }
-        
-        .form-control,
-        .form-select,
-        .select2-container--default .select2-selection--single {
-            background: rgba(255,255,255,0.05);
-            border-color: rgba(255,255,255,0.12);
-            color: var(--text);
-        }
-        .select2-container .select2-selection--single {
-            height: auto;
-            padding: 0.65rem 0.9rem;
-            border-radius: 0.35rem;
-        }
-        .select2-container--default .select2-selection--single .select2-selection__rendered {
-            color: var(--text);
-            line-height: 1.4;
-        }
-        .select2-container--default .select2-selection--single .select2-selection__arrow {
-            height: 100%;
-        }
-        .select2-container--default .select2-dropdown,
-        .select2-container--classic .select2-dropdown {
-            background: #0f1115 !important;
-            border-color: rgba(255,255,255,0.12) !important;
-        }
-        .select2-container--default .select2-results__option,
-        .select2-container--classic .select2-results__option {
-            background-color: #101317 !important;
-            color: #eef2f7 !important;
-            padding: 10px 12px;
-        }
-        .select2-container--default .select2-results__option--highlighted,
-        .select2-container--classic .select2-results__option--highlighted,
-        .select2-container--default .select2-results__option[aria-selected="true"],
-        .select2-container--classic .select2-results__option[aria-selected="true"] {
-            background-color: rgba(46, 204, 113, 0.24) !important;
-            color: #111 !important;
-        }
-        .spinner-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.76);
-            display: none;
-            place-items: center;
-            z-index: 9999;
-        }
-        .spinner-overlay.active {
-            display: grid;
-        }
-        .spinner {
-            width: 72px;
-            height: 72px;
-            border: 8px solid rgba(255, 255, 255, 0.16);
-            border-top-color: var(--green);
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-        }
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        .form-control:focus,
-        .form-select:focus {
-            border-color: var(--green);
-            box-shadow: 0 0 0 0.25rem rgba(46,204,113,0.18);
-        }
-        .btn-primary {
-            background: var(--green);
-            border-color: var(--green);
-            color: #111;
-        }
-        .alert {
-            border-radius: 14px;
-        }
-        .preview-row {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 18px;
-            margin-top: 24px;
-        }
-        .menu-preview {
-            background: rgba(255,255,255,0.04);
-            border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 18px;
-            padding: 18px;
-        }
-        .menu-preview h2 {
-            margin: 0 0 14px;
-            font-size: 1.05rem;
-            color: var(--green);
-        }
-        .menu-preview-item {
-            margin-bottom: 10px;
-        }
-        .menu-preview-item:last-child { margin-bottom: 0; }
-        .menu-preview-item span {
-            color: var(--muted);
-            display: block;
-            margin-top: 4px;
-            font-size: 0.92rem;
-        }
-        .existing-image {
-            max-width: 100%;
-            border-radius: 14px;
-            margin-top: 14px;
-            display: block;
-        }
-        @media (max-width: 720px) {
-            .preview-row { grid-template-columns: 1fr; }
-        }
-    </style>
+    <link href="../assets/css/admin_menu_image_upload.css" rel="stylesheet">
+
 </head>
 <body>
     <div class="page-wrapper">
         <div class="panel">
             <h1>Upload Menu Image</h1>
-            <p class="page-subtitle">Choose a menu item and upload an image. The image will be stored in <code>./uploads</code> and the menu's <code>image_path</code> column will be updated.</p>
+            <p class="page-subtitle">Choose a menu item and upload an image. The image will be stored in <code>../uploads</code> and the menu's <code>image_path</code> column will be updated.</p>
 
             <?php if ($message !== ''): ?>
-                <div class="alert alert-<?= $messageClass === 'success' ? 'success' : 'danger' ?>" role="alert">
+                <div
+                    id="uploadFeedback"
+                    class="alert alert-<?= $messageClass === 'success' ? 'success' : 'danger' ?>"
+                    data-message="<?= htmlspecialchars($message, ENT_QUOTES, 'UTF-8') ?>"
+                    data-type="<?= $messageClass === 'success' ? 'success' : 'error' ?>"
+                    role="alert"
+                >
                     <?= htmlspecialchars($message, ENT_QUOTES, 'UTF-8') ?>
                 </div>
             <?php endif; ?>
 
-            <form action="<?= htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES, 'UTF-8') ?>" method="post" enctype="multipart/form-data">
+            <form method="post" enctype="multipart/form-data">
+                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken, ENT_QUOTES, 'UTF-8') ?>">
                 <div class="mb-3">
                     <label for="menu_id" class="form-label">Menu Item</label>
                     <select class="form-select" id="menu_id" name="menu_id" required>
@@ -282,16 +195,17 @@ if (!empty($_SESSION['menu_image_upload_flash'])) {
                 <div class="mb-4">
                     <label for="menu_image" class="form-label">Menu Image</label>
                     <input class="form-control" type="file" id="menu_image" name="menu_image" accept="image/jpeg,image/png,image/gif,image/webp" required>
+                    <div class="form-text text-light">Maximum file size: 5 MB.</div>
                 </div>
                 <button class="btn btn-primary" type="submit">Upload Image</button>
-                <a class="btn btn-secondary ms-2" href="full_menu.php">Back to Image Menu</a>
+                <a class="btn btn-secondary ms-2" href="../full_menu">Back to Image Menu</a>
             </form>
 
             <div class="preview-row">
                 <div class="menu-preview">
                     <h2>Upload Guidelines</h2>
                     <div class="menu-preview-item">Allowed formats: JPG, PNG, GIF, WEBP</div>
-                    <div class="menu-preview-item">Images are stored in <code>./uploads</code> under the site root.</div>
+                    <div class="menu-preview-item">Images are stored in the shared <code>uploads</code> folder under the site root.</div>
                     <div class="menu-preview-item">The database column <code>image_path</code> is updated with the relative path to the stored image.</div>
                     <div class="menu-preview-item">If the selected menu item already has an image, the new upload replaces the database reference, but not the old file.</div>
                 </div>
@@ -311,32 +225,6 @@ if (!empty($_SESSION['menu_image_upload_flash'])) {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-rc.0/js/select2.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script>
-        $(document).ready(function() {
-            $('#menu_id').select2({
-                placeholder: 'Select a menu item',
-                width: '100%',
-                theme: 'classic'
-            });
-
-            $('#menu_id').closest('form').on('submit', function () {
-                $('#spinnerOverlay').addClass('active');
-            });
-
-            var flashMessage = <?= json_encode($message, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;
-            var flashType = <?= json_encode($messageClass, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;
-
-            if (flashMessage) {
-                Swal.fire({
-                    icon: flashType === 'success' ? 'success' : 'error',
-                    title: flashType === 'success' ? 'Success' : 'Oops!',
-                    text: flashMessage,
-                    confirmButtonColor: '#2ecc71',
-                }).then(function () {
-                    window.location.replace(window.location.pathname);
-                });
-            }
-        });
-    </script>
+    <script src="../assets/js/admin_menu_image_upload.js"></script>
 </body>
 </html>
