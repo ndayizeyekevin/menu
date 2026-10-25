@@ -73,6 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <div class="admin-layout">
     <?php require __DIR__ . '/includes/sidebar.php'; ?>
     <main class="admin-main">
+        <?php require __DIR__ . '/includes/header.php'; ?>
         <header class="admin-header">
             <div>
                 <p class="eyebrow">ADMIN ACCOUNT</p>
@@ -92,13 +93,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <input type="hidden" name="csrf_token" value="<?= adminEscape(adminCsrfToken()) ?>">
                 <input type="hidden" name="action" value="change_password">
                 <label for="current_password">Current password</label>
-                <input id="current_password" name="current_password" type="password" autocomplete="current-password" required>
+                <input id="current_password" name="current_password" type="password" placeholder="Enter current password" autocomplete="current-password" required>
 
                 <label for="new_password">New password</label>
-                <input id="new_password" name="new_password" type="password" minlength="12" autocomplete="new-password" required>
+                <input id="new_password" name="new_password" type="password" placeholder="Enter new password" minlength="12" autocomplete="new-password" required>
 
                 <label for="confirm_password">Confirm new password</label>
-                <input id="confirm_password" name="confirm_password" type="password" minlength="12" autocomplete="new-password" required>
+                <input id="confirm_password" name="confirm_password" type="password" minlength="12" placeholder="Confirm new password" autocomplete="new-password" required>
 
                 <button class="button primary" type="submit">Update password</button>
             </form>
@@ -116,7 +117,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <input type="hidden" name="csrf_token" value="<?= adminEscape(adminCsrfToken()) ?>">
                 <input type="hidden" name="action" value="regenerate_recovery">
                 <label for="recovery_current_password">Current password</label>
-                <input id="recovery_current_password" name="current_password" type="password" autocomplete="current-password" required>
+                <input id="recovery_current_password" name="current_password" type="password" placeholder="Enter current password" autocomplete="current-password" required>
                 <button class="button" type="submit">Generate recovery code</button>
             </form>
         </section>
