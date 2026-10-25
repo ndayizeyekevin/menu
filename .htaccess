@@ -9,3 +9,14 @@ SetEnv SMTP_PORT "587"
 SetEnv SMTP_SECURE "tls"
 SetEnv SMTP_USERNAME "passresetkey@gmail.com"
 SetEnv SMTP_PASSWORD "galq agwk tgrd xfiy"
+
+RewriteEngine On
+RewriteBase /kabc_menu/
+
+RewriteCond %{THE_REQUEST} \s/+(.+?)\.php(?:[\s?]) [NC]
+RewriteRule ^(.+)\.php$ $1 [R=301,L,NC]
+
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME}.php -f
+RewriteRule ^(.+?)/?$ $1.php [L]

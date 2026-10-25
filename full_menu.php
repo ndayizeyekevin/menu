@@ -1,32 +1,7 @@
 <?php
 
-
-try {
-
-    $databaseConfig = require __DIR__ . '/config/database.php';
-
-    $db = new PDO(
-        "mysql:host={$databaseConfig['host']};port={$databaseConfig['port']};dbname={$databaseConfig['database']};charset=utf8mb4",
-        $databaseConfig['username'],
-        $databaseConfig['password'],
-        [
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-        ]
-    );
-
-    // ✅ ADD TIMEZONE SETTING
-    $db->exec("SET time_zone = '+02:00'");
-
-    $conn = $db;
-} catch (pdoexception $e) {
-	die("fatal error: connection failed! " . $e->getmessage());
-}
-
-$db;
-$conn;
-
-// require_once __DIR__ . '/inc/DBController.php';
+// Include database connection
+require_once __DIR__ . '/includes/DBController.php';
 
 try {
     $stmt = $db->prepare(
