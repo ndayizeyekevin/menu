@@ -1,3 +1,8 @@
+<?php
+require_once __DIR__ . '/includes/admin_session.php';
+
+$landingCsrfToken = adminCsrfToken();
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -21,6 +26,7 @@
         <nav class="site-nav" aria-label="Main navigation">
             <a href="#experience">Our table</a>
             <a class="nav-menu-link" href="full_menu">Explore the menu <span aria-hidden="true">↗</span></a>
+            <button class="nav-login-button" type="button" data-login-open>Admin sign in</button>
         </nav>
     </header>
 
@@ -76,6 +82,26 @@
         </section>
     </main>
 
+    <dialog class="login-dialog" id="adminLoginDialog" aria-labelledby="loginDialogTitle">
+        <div class="login-dialog-content">
+            <button class="login-dialog-close" type="button" data-login-close aria-label="Close sign-in dialog">&times;</button>
+            <p class="eyebrow eyebrow-dark"><span></span> KABC HOTEL ADMIN</p>
+            <h2 id="loginDialogTitle">Welcome back.</h2>
+            <p class="login-dialog-copy">Sign in to manage menu items and images.</p>
+            <form class="landing-login-form" action="admin/index.php" method="post">
+                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($landingCsrfToken, ENT_QUOTES, 'UTF-8') ?>">
+                <input type="hidden" name="action" value="login">
+                <label for="landingUsername">Username</label>
+                <input id="landingUsername" name="username" type="text" minlength="3" maxlength="64" autocomplete="username" required>
+                <label for="landingPassword">Password</label>
+                <input id="landingPassword" name="password" type="password" autocomplete="current-password" required>
+                <button class="button button-primary" type="submit">Sign in <span aria-hidden="true">→</span></button>
+            </form>
+            <a class="login-recovery-link" href="admin/">Forgot your password?</a>
+        </div>
+    </dialog>
+
     <?php require __DIR__ . '/includes/footer.php'; ?>
+    <script src="assets/js/landing.js" defer></script>
 </body>
 </html>
