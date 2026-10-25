@@ -24,6 +24,7 @@ try {
 <div class="admin-layout">
     <?php require __DIR__ . '/includes/sidebar.php'; ?>
     <main class="admin-main">
+        <?php require __DIR__ . '/includes/header.php'; ?>
         <header class="admin-header">
             <div>
                 <p class="eyebrow">ADMINISTRATION</p>

@@ -162,6 +162,7 @@ try {
 <div class="admin-layout">
     <?php require __DIR__ . '/includes/sidebar.php'; ?>
     <main class="admin-main">
+        <?php require __DIR__ . '/includes/header.php'; ?>
         <div class="page-wrapper">
           <div class="panel">
             <h1>Upload Menu Image</h1>
