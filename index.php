@@ -92,9 +92,9 @@ $landingCsrfToken = adminCsrfToken();
                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($landingCsrfToken, ENT_QUOTES, 'UTF-8') ?>">
                 <input type="hidden" name="action" value="login">
                 <label for="landingUsername">Username</label>
-                <input id="landingUsername" name="username" type="text" minlength="3" maxlength="64" autocomplete="username" required>
+                <input id="landingUsername" name="username" type="text" minlength="3" maxlength="64" placeholder="Enter username" autocomplete="username" required>
                 <label for="landingPassword">Password</label>
-                <input id="landingPassword" name="password" type="password" autocomplete="current-password" required>
+                <input id="landingPassword" name="password" type="password" placeholder="Enter password" autocomplete="current-password" required>
                 <button class="button button-primary" type="submit">Sign in <span aria-hidden="true">→</span></button>
             </form>
             <a class="login-recovery-link" href="admin/">Forgot your password?</a>
