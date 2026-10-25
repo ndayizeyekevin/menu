@@ -24,8 +24,10 @@ try {
     $db->exec("SET time_zone = '+02:00'");
 
     $conn = $db;
-} catch (pdoexception $e) {
-	die("fatal error: connection failed! " . $e->getmessage());
+} catch (PDOException $e) {
+    error_log('Database connection failed: ' . $e->getMessage());
+    http_response_code(500);
+    die('Database connection failed. Please try again later.');
 }
 
 $db;
