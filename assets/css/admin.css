@@ -601,6 +601,43 @@ a { color: #2476b8; }
     font-weight: 800;
 }
 
+.admin-topbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.theme-toggle {
+    display: inline-flex;
+    min-height: 38px;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+    border: 1px solid rgba(210, 220, 230, 0.2);
+    border-radius: 8px;
+    background: transparent;
+    color: #d2dce6;
+    font: inherit;
+    font-size: 0.82rem;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.theme-toggle:hover {
+    border-color: rgba(210, 220, 230, 0.45);
+    background: rgba(255, 255, 255, 0.07);
+    color: #fff;
+}
+
+.theme-toggle:focus-visible {
+    outline: 2px solid var(--admin-accent);
+    outline-offset: 2px;
+}
+
+.theme-toggle-icon {
+    font-size: 1rem;
+}
+
 .admin-topbar-public {
     display: inline-flex;
     align-items: center;
@@ -715,6 +752,19 @@ a { color: #2476b8; }
         var(--admin-bg);
 }
 
+.login-theme-toggle {
+    position: fixed;
+    top: 18px;
+    right: 18px;
+    color: var(--admin-text);
+    border-color: var(--admin-border);
+}
+
+.login-theme-toggle:hover {
+    background: var(--admin-panel-light);
+    color: var(--admin-text);
+}
+
 .login-card { padding: 38px; }
 .login-card h1 { color: #132e48; }
 .login-brand { display: block; }
@@ -799,4 +849,189 @@ a { color: #2476b8; }
     }
 
     .admin-header { align-items: flex-start; }
+}
+
+@media (max-width: 380px) {
+    .theme-toggle {
+        padding: 6px 8px;
+    }
+
+    .theme-toggle-label {
+        display: none;
+    }
+}
+
+:root[data-theme="dark"] {
+    color-scheme: dark;
+    --admin-bg: #0c1420;
+    --admin-panel: #151f2e;
+    --admin-panel-light: #1c2a3c;
+    --admin-text: #e7edf5;
+    --admin-muted: #a0afc0;
+    --admin-green: #67b7ec;
+    --admin-border: #2b3b4f;
+    --admin-sidebar-hover: #24445e;
+}
+
+:root[data-theme="dark"] body {
+    background: var(--admin-bg);
+    color: var(--admin-text);
+}
+
+:root[data-theme="dark"] a {
+    color: #8bc9f2;
+}
+
+:root[data-theme="dark"] .admin-sidebar {
+    background: linear-gradient(180deg, #10283f 0%, #0b1d30 100%);
+}
+
+:root[data-theme="dark"] .admin-topbar {
+    background: #070d16;
+}
+
+:root[data-theme="dark"] .admin-header h1,
+:root[data-theme="dark"] .admin-card h2,
+:root[data-theme="dark"] .login-card h1 {
+    color: #e7edf5;
+}
+
+:root[data-theme="dark"] .admin-header .eyebrow,
+:root[data-theme="dark"] .login-card .eyebrow {
+    color: #78bff0;
+}
+
+:root[data-theme="dark"] .admin-card,
+:root[data-theme="dark"] .login-card,
+:root[data-theme="dark"] .admin-main .panel {
+    border-color: var(--admin-border);
+    background: var(--admin-panel);
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.16);
+}
+
+:root[data-theme="dark"] .stat-card strong,
+:root[data-theme="dark"] .stat-card:nth-child(2) strong,
+:root[data-theme="dark"] .stat-card:nth-child(3) strong {
+    color: #8bc9f2;
+}
+
+:root[data-theme="dark"] .stat-card:nth-child(2) strong {
+    color: #6bd0a8;
+}
+
+:root[data-theme="dark"] .stat-card:nth-child(3) strong {
+    color: #c49be0;
+}
+
+:root[data-theme="dark"] .button {
+    border-color: #3a4d63;
+    background: var(--admin-panel-light);
+    color: #dce7f2;
+}
+
+:root[data-theme="dark"] .button.primary {
+    border-color: #287db5;
+    background: #287db5;
+    color: #fff;
+}
+
+:root[data-theme="dark"] .button.primary:hover {
+    background: #3691ca;
+}
+
+:root[data-theme="dark"] .admin-form input,
+:root[data-theme="dark"] .admin-form textarea,
+:root[data-theme="dark"] .admin-form select,
+:root[data-theme="dark"] .search-form input,
+:root[data-theme="dark"] .upload-panel .form-control,
+:root[data-theme="dark"] .upload-panel .form-select {
+    border-color: #3a4c60;
+    background-color: #101a28;
+    color: #e7edf5;
+}
+
+:root[data-theme="dark"] .admin-form input::placeholder,
+:root[data-theme="dark"] .admin-form textarea::placeholder,
+:root[data-theme="dark"] .search-form input::placeholder {
+    color: #8c9daf;
+}
+
+:root[data-theme="dark"] .admin-form input:focus,
+:root[data-theme="dark"] .admin-form textarea:focus,
+:root[data-theme="dark"] .admin-form select:focus,
+:root[data-theme="dark"] .search-form input:focus,
+:root[data-theme="dark"] .upload-panel .form-control:focus,
+:root[data-theme="dark"] .upload-panel .form-select:focus {
+    border-color: #55a8dd;
+    outline-color: rgba(85, 168, 221, 0.22);
+}
+
+:root[data-theme="dark"] .admin-table th,
+:root[data-theme="dark"] .admin-table td {
+    border-color: var(--admin-border);
+}
+
+:root[data-theme="dark"] .admin-table th {
+    color: #a0afc0;
+}
+
+:root[data-theme="dark"] .admin-table td {
+    color: #d5deea;
+}
+
+:root[data-theme="dark"] .notice.error,
+:root[data-theme="dark"] .upload-panel .alert-danger {
+    background: #3b2025;
+    color: #ffb4ac;
+}
+
+:root[data-theme="dark"] .notice.success {
+    background: #17372f;
+    color: #a5e7c7;
+}
+
+:root[data-theme="dark"] .upload-panel .page-subtitle,
+:root[data-theme="dark"] .upload-panel .form-label {
+    color: #dce7f2;
+}
+
+:root[data-theme="dark"] .upload-panel code {
+    color: #8bc9f2;
+}
+
+:root[data-theme="dark"] .upload-panel .menu-preview {
+    border-color: var(--admin-border);
+    background: #101a28;
+    color: #d5deea;
+}
+
+:root[data-theme="dark"] .upload-panel .menu-preview h2 {
+    color: #8bc9f2;
+}
+
+:root[data-theme="dark"] .upload-panel .select2-container--default .select2-selection--single,
+:root[data-theme="dark"] .upload-panel .select2-container--default .select2-dropdown,
+:root[data-theme="dark"] .upload-panel .select2-container--classic .select2-dropdown {
+    border-color: #3a4c60 !important;
+    background: #101a28 !important;
+    color: #e7edf5 !important;
+}
+
+:root[data-theme="dark"] .upload-panel .select2-container--default .select2-selection__rendered,
+:root[data-theme="dark"] .upload-panel .select2-container--default .select2-results__option,
+:root[data-theme="dark"] .upload-panel .select2-container--classic .select2-results__option {
+    background: #101a28 !important;
+    color: #e7edf5 !important;
+}
+
+:root[data-theme="dark"] .upload-panel .select2-container--default .select2-results__option--highlighted,
+:root[data-theme="dark"] .upload-panel .select2-container--classic .select2-results__option--highlighted {
+    background: #24445e !important;
+    color: #fff !important;
+}
+
+:root[data-theme="dark"] .upload-panel .btn-secondary {
+    border-color: #53677c;
+    background: #40566c;
+    color: #fff;
 }

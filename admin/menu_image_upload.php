@@ -152,6 +152,7 @@ try {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Upload menu image | KABC Hotel</title>
     <link rel="icon" type="image/png" href="../img/icon.png">
+    <script src="../assets/js/admin_theme.js"></script>
     <link href="../assets/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-rc.0/css/select2.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">

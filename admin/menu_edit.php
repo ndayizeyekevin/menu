@@ -74,6 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit menu item | KABC Hotel</title>
     <link rel="icon" type="image/png" href="../img/icon.png">
+    <script src="../assets/js/admin_theme.js"></script>
     <link rel="stylesheet" href="../assets/css/admin.css">
 </head>
 <body>
