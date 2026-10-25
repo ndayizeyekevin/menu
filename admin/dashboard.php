@@ -26,6 +26,7 @@ unset($_SESSION['admin_recovery_notice']);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin dashboard | KABC Hotel</title>
+    <link rel="icon" type="image/png" href="../img/icon.png">
     <link rel="stylesheet" href="../assets/css/admin.css">
 </head>
 <body>
@@ -39,7 +40,6 @@ unset($_SESSION['admin_recovery_notice']);
                 <h1>Welcome, <?= adminEscape($_SESSION['admin_username']) ?></h1>
                 <p class="muted">Manage your menu and account from one place.</p>
             </div>
-            <a class="button" href="../full_menu">View public menu</a>
         </header>
 
         <?php if ($flash): ?>

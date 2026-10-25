@@ -150,7 +150,7 @@ try {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Upload Menu Image</title>
+    <title>Upload menu image | KABC Hotel</title>
     <link rel="icon" type="image/png" href="../img/icon.png">
     <link href="../assets/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-rc.0/css/select2.min.css" rel="stylesheet">
@@ -163,10 +163,13 @@ try {
     <?php require __DIR__ . '/includes/sidebar.php'; ?>
     <main class="admin-main">
         <?php require __DIR__ . '/includes/header.php'; ?>
-        <div class="page-wrapper">
-          <div class="panel">
-            <h1>Upload Menu Image</h1>
-            <p class="page-subtitle">Choose a menu item and upload an image. The image will be stored in <code>../uploads</code> and the menu's <code>image_path</code> column will be updated.</p>
+        <header class="admin-header">
+            <div>
+                <p class="eyebrow">MENU MANAGEMENT</p>
+                <h1>Upload menu image</h1>
+                <p class="muted">Choose a menu item and upload an image to display on the public menu.</p>
+            </div>
+        </header>
 
             <?php if ($message !== ''): ?>
                 <div
@@ -180,6 +183,8 @@ try {
                 </div>
             <?php endif; ?>
 
+            <section class="admin-card upload-panel">
+            <p class="page-subtitle">Images are stored in the shared <code>uploads</code> folder; the menu item's image path is updated after upload.</p>
             <form method="post" enctype="multipart/form-data">
                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken, ENT_QUOTES, 'UTF-8') ?>">
                 <div class="mb-3">
@@ -219,8 +224,7 @@ try {
                     <?php endif; ?>
                 </div>
             </div>
-          </div>
-        </div>
+            </section>
     </main>
     </div>
     <div id="spinnerOverlay" class="spinner-overlay">

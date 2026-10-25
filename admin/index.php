@@ -257,9 +257,10 @@ unset($_SESSION['admin_password_reset_notice']);
 </head>
 <body class="login-page">
     <main class="login-card">
-        <a class="admin-brand login-brand" href="../full_menu">
-            <img src="../img/icon.png" alt="KABC Hotel logo">
+        <a class="login-brand" href="../full_menu" aria-label="KABC Hotel public menu">
+            <img src="../img/icon.png" alt="KABC Hotel">
         </a>
+        <p class="eyebrow">KABC HOTEL ADMIN</p>
         <h1><?= $setupMode ? 'Create your admin account' : 'Welcome back' ?></h1>
         <p class="muted">
             <?= $setupMode
