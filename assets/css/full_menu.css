@@ -355,7 +355,11 @@ body {
     color: var(--text-dim);
     font-size: clamp(0.7rem, 1.5vw, 0.8rem);
     letter-spacing: 0.1em;
-    /* text-transform: uppercase; */
+}
+
+.menu-footer a:hover {
+    text-decoration: none;
+    color: #1f8549 !important;
 }
 
 .menu-footer span {
