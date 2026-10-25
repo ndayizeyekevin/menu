@@ -3,14 +3,22 @@ require_once __DIR__ . '/includes/require_admin.php';
 
 $errorMessage = '';
 $successMessage = '';
-$recoveryCode = $_SESSION['admin_recovery_notice'] ?? '';
-unset($_SESSION['admin_recovery_notice']);
+$adminEmail = '';
+
+try {
+    $emailStmt = $db->prepare('SELECT email FROM admin_users WHERE id = :id');
+    $emailStmt->execute([':id' => $_SESSION['admin_user_id']]);
+    $adminEmail = (string) $emailStmt->fetchColumn();
+} catch (PDOException $e) {
+    error_log('Unable to load admin account email: ' . $e->getMessage());
+    http_response_code(500);
+    $errorMessage = 'Account details could not be loaded.';
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!adminVerifyCsrfToken($_POST['csrf_token'] ?? null)) {
         $errorMessage = 'Your session has expired. Please try again.';
     } else {
-        $action = isset($_POST['action']) && is_string($_POST['action']) ? $_POST['action'] : 'change_password';
         $currentPassword = isset($_POST['current_password']) && is_string($_POST['current_password'])
             ? $_POST['current_password']
             : '';
@@ -22,16 +30,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             if (!$admin || !password_verify($currentPassword, $admin['password_hash'])) {
                 $errorMessage = 'Your current password is incorrect.';
-            } elseif ($action === 'regenerate_recovery') {
-                $recoveryCode = bin2hex(random_bytes(32));
-                $update = $db->prepare('UPDATE admin_users SET password_recovery_hash = :recovery_hash WHERE id = :id');
-                $update->execute([
-                    ':recovery_hash' => hash('sha256', $recoveryCode),
-                    ':id' => $_SESSION['admin_user_id'],
-                ]);
-                $_SESSION['admin_recovery_notice'] = $recoveryCode;
-                header('Location: change_password.php');
-                exit;
             } else {
                 $newPassword = isset($_POST['new_password']) && is_string($_POST['new_password'])
                     ? $_POST['new_password']
@@ -44,7 +42,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 } elseif ($newPassword !== $confirmPassword) {
                     $errorMessage = 'The new password and confirmation do not match.';
                 } else {
-                    $update = $db->prepare('UPDATE admin_users SET password_hash = :password_hash WHERE id = :id');
+                    $update = $db->prepare(
+                        'UPDATE admin_users
+                         SET password_hash = :password_hash,
+                             password_reset_key = NULL,
+                             reset_key_expiry = NULL
+                         WHERE id = :id'
+                    );
                     $update->execute([
                         ':password_hash' => password_hash($newPassword, PASSWORD_DEFAULT),
                         ':id' => $_SESSION['admin_user_id'],
@@ -108,20 +112,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </section>
         <section class="admin-card recovery-card">
             <h2>Account recovery</h2>
-            <p class="muted">If you lose your password, the recovery code lets you reset it from the sign-in page. Generate a new code if you no longer have yours.</p>
-            <?php if ($recoveryCode !== ''): ?>
-                <div class="notice success recovery-code" role="alert">
-                    <strong>Store this new recovery code securely. It will not be shown again.</strong>
-                    <code><?= adminEscape($recoveryCode) ?></code>
-                </div>
-            <?php endif; ?>
-            <form class="admin-form" method="post">
-                <input type="hidden" name="csrf_token" value="<?= adminEscape(adminCsrfToken()) ?>">
-                <input type="hidden" name="action" value="regenerate_recovery">
-                <label for="recovery_current_password">Current password</label>
-                <input id="recovery_current_password" name="current_password" type="password" placeholder="Enter current password" autocomplete="current-password" required>
-                <button class="button" type="submit">Generate recovery code</button>
-            </form>
+            <p class="muted">Password reset links are sent to <strong><?= adminEscape($adminEmail) ?></strong> and expire after one hour. Keep this email address accessible.</p>
         </section>
     </main>
 </div>
