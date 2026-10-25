@@ -17,8 +17,6 @@ try {
 }
 
 $flash = $flash ?? adminConsumeFlash();
-$recoveryCode = $_SESSION['admin_recovery_notice'] ?? '';
-unset($_SESSION['admin_recovery_notice']);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -46,13 +44,6 @@ unset($_SESSION['admin_recovery_notice']);
         <?php if ($flash): ?>
             <div class="notice <?= $flash['type'] === 'success' ? 'success' : 'error' ?>" role="status"><?= adminEscape($flash['message']) ?></div>
         <?php endif; ?>
-        <?php if ($recoveryCode !== ''): ?>
-            <div class="notice success recovery-code" role="alert">
-                <strong>Save this recovery code securely. It will not be shown again.</strong>
-                <code><?= adminEscape($recoveryCode) ?></code>
-            </div>
-        <?php endif; ?>
-
         <section class="stats-grid" aria-label="Menu summary">
             <article class="admin-card stat-card"><span class="muted">Menu items</span><strong><?= $menuCount ?></strong></article>
             <article class="admin-card stat-card"><span class="muted">Items with images</span><strong><?= $imageCount ?></strong></article>

@@ -3,13 +3,6 @@ SetEnv VSDC_TIN "999900823"
 SetEnv VSDC_BHFID "00"
 SetEnv VSDC_BASE_URL "http://197.243.26.62:8080/rraVsdcSandbox2.1.2.3.7/"
 
-# SMTP credentials
-SetEnv SMTP_HOST "smtp.gmail.com"
-SetEnv SMTP_PORT "587"
-SetEnv SMTP_SECURE "tls"
-SetEnv SMTP_USERNAME "passresetkey@gmail.com"
-SetEnv SMTP_PASSWORD "galq agwk tgrd xfiy"
-
 RewriteEngine On
 RewriteBase /kabc_menu/
 

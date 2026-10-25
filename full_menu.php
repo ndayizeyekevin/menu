@@ -57,7 +57,7 @@ function renderMenuColumn(array $categories): void
                 </div>
                 <?php foreach ($subsections as $subName => $items): ?>
                     <?php if ($subName !== 'General' || count($subsections) > 1): ?>
-                        <div class="subcat-label font-weight-bold text-white py-3 bg-success"><?= htmlspecialchars(strtoupper($subName), ENT_QUOTES, 'UTF-8') ?></div>
+                        <div class="subcat-label"><?= htmlspecialchars(strtoupper($subName), ENT_QUOTES, 'UTF-8') ?></div>
                     <?php endif; ?>
                     <?php foreach ($items as $item):
                         $imagePath = trim((string) ($item['image_path'] ?? ''));
@@ -105,12 +105,13 @@ function renderMenuColumn(array $categories): void
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="assets/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link href="assets/css/full_menu.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+    <link href="assets/css/full_menu.css?v=3" rel="stylesheet">
 </head>
 <body>
     <header class="header">
         <div class="header-content">
+            <a class="header-home-link" href="./"><span aria-hidden="true">←</span> KABC HOTEL</a>
             <img src="./img/icon.png" alt="Menu icon">
             <h1>OUR MENU</h1>
             <p class="header-sub">Fresh dishes & drinks from our kitchen</p>
@@ -118,7 +119,7 @@ function renderMenuColumn(array $categories): void
             <div class="search-wrap">
                 <input id="menuSearch" class="menu-search" type="search" placeholder="Search dishes, categories or descriptions…" aria-label="Search menu items">
             </div>
-            <a class="export-link" href="menu_table.php" target="_blank" rel="noopener" style="margin-left: 10px;">Export to PDF</a>
+            <a class="export-link" href="menu_table.php" target="_blank" rel="noopener">Download menu <span aria-hidden="true">↗</span></a>
         </div>
     </header>
 

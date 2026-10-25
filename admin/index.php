@@ -3,25 +3,35 @@ require_once __DIR__ . '/includes/bootstrap.php';
 
 $errorMessage = '';
 $setupMode = false;
-$recoveryNotice = $_SESSION['admin_recovery_notice'] ?? '';
-unset($_SESSION['admin_recovery_notice']);
+$resetRequestMessage = '';
 
 try {
     $db->exec(
         "CREATE TABLE IF NOT EXISTS admin_users (
             id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
             username VARCHAR(64) NOT NULL UNIQUE,
+            firstName VARCHAR(100) NULL,
+            lastName VARCHAR(100) NULL,
             password_hash VARCHAR(255) NOT NULL,
-            password_recovery_hash CHAR(64) NULL,
-            email VARCHAR(190) NULL,
+            password_reset_key VARCHAR(255) NULL,
+            reset_key_expiry TIMESTAMP NULL,
+            email VARCHAR(190) NOT NULL UNIQUE,
             created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
             updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
             last_login_at DATETIME NULL
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4"
     );
     $userColumns = $db->query('SHOW COLUMNS FROM admin_users')->fetchAll(PDO::FETCH_COLUMN, 0);
-    if (!in_array('password_recovery_hash', $userColumns, true)) {
-        $db->exec('ALTER TABLE admin_users ADD password_recovery_hash CHAR(64) NULL AFTER password_hash');
+    foreach ([
+        'firstName' => 'VARCHAR(100) NULL',
+        'lastName' => 'VARCHAR(100) NULL',
+        'password_reset_key' => 'VARCHAR(255) NULL',
+        'reset_key_expiry' => 'TIMESTAMP NULL',
+        'email' => 'VARCHAR(190) NULL',
+    ] as $column => $definition) {
+        if (!in_array($column, $userColumns, true)) {
+            $db->exec("ALTER TABLE admin_users ADD `$column` $definition");
+        }
     }
     $db->exec(
         "CREATE TABLE IF NOT EXISTS admin_login_logs (
@@ -36,6 +46,14 @@ try {
             INDEX idx_admin_login_date (created_at),
             CONSTRAINT fk_admin_login_user
                 FOREIGN KEY (user_id) REFERENCES admin_users (id) ON DELETE SET NULL
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4"
+    );
+    $db->exec(
+        "CREATE TABLE IF NOT EXISTS admin_password_reset_requests (
+            id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+            ip_address VARCHAR(45) NOT NULL,
+            created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            INDEX idx_admin_password_reset_ip_date (ip_address, created_at)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4"
     );
 
@@ -55,75 +73,88 @@ try {
             $email = isset($_POST['email']) && is_string($_POST['email'])
                 ? trim($_POST['email'])
                 : '';
+            $firstName = isset($_POST['firstName']) && is_string($_POST['firstName'])
+                ? trim($_POST['firstName'])
+                : '';
+            $lastName = isset($_POST['lastName']) && is_string($_POST['lastName'])
+                ? trim($_POST['lastName'])
+                : '';
             $remoteAddress = substr((string) ($_SERVER['REMOTE_ADDR'] ?? 'unknown'), 0, 45);
             $userAgent = substr((string) ($_SERVER['HTTP_USER_AGENT'] ?? ''), 0, 255);
 
-            if (!$setupMode && $action === 'reset_password') {
-                $recoveryCode = isset($_POST['recovery_code']) && is_string($_POST['recovery_code'])
-                    ? strtolower(trim($_POST['recovery_code']))
-                    : '';
-                $newPassword = isset($_POST['new_password']) && is_string($_POST['new_password'])
-                    ? $_POST['new_password']
-                    : '';
-                $confirmPassword = isset($_POST['confirm_password']) && is_string($_POST['confirm_password'])
-                    ? $_POST['confirm_password']
-                    : '';
-                $failedAttempts = $db->prepare(
-                    'SELECT COUNT(*) FROM admin_login_logs
-                     WHERE ip_address = :ip_address AND success = 0
+            if (!$setupMode && $action === 'request_password_reset') {
+                $db->exec(
+                    'DELETE FROM admin_password_reset_requests
+                     WHERE created_at < DATE_SUB(NOW(), INTERVAL 1 DAY)'
+                );
+                $recordRequest = $db->prepare(
+                    'INSERT INTO admin_password_reset_requests (ip_address) VALUES (:ip_address)'
+                );
+                $recordRequest->execute([':ip_address' => $remoteAddress]);
+                $recentRequests = $db->prepare(
+                    'SELECT COUNT(*) FROM admin_password_reset_requests
+                     WHERE ip_address = :ip_address
                        AND created_at >= DATE_SUB(NOW(), INTERVAL 15 MINUTE)'
                 );
-                $failedAttempts->execute([':ip_address' => $remoteAddress]);
-                if ((int) $failedAttempts->fetchColumn() >= 10) {
-                    $errorMessage = 'Too many attempts. Please wait 15 minutes and try again.';
-                } elseif (
-                    !preg_match('/^[a-zA-Z0-9_.-]{3,64}$/', $username)
-                    || !preg_match('/^[a-f0-9]{64}$/', $recoveryCode)
-                    || strlen($newPassword) < 12
-                    || $newPassword !== $confirmPassword
-                ) {
-                    $errorMessage = 'The recovery details are invalid or the new passwords do not match.';
-                } else {
-                    $findUser = $db->prepare(
-                        'SELECT id, password_recovery_hash FROM admin_users WHERE username = :username'
-                    );
-                    $findUser->execute([':username' => $username]);
+                $recentRequests->execute([':ip_address' => $remoteAddress]);
+
+                if ((int) $recentRequests->fetchColumn() > 5) {
+                    $errorMessage = 'Too many reset requests. Please wait 15 minutes and try again.';
+                } elseif (filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                    $findUser = $db->prepare('SELECT id FROM admin_users WHERE email = :email');
+                    $findUser->execute([':email' => $email]);
                     $user = $findUser->fetch();
-                    $validRecovery = $user
-                        && is_string($user['password_recovery_hash'])
-                        && hash_equals($user['password_recovery_hash'], hash('sha256', $recoveryCode));
-                    $newRecoveryCode = $validRecovery ? bin2hex(random_bytes(32)) : null;
-                    if ($validRecovery) {
-                        $resetPassword = $db->prepare(
+
+                    if ($user) {
+                        $token = bin2hex(random_bytes(32));
+                        $tokenHash = hash('sha256', $token);
+                        $saveToken = $db->prepare(
                             'UPDATE admin_users
-                             SET password_hash = :password_hash, password_recovery_hash = :recovery_hash
+                             SET password_reset_key = :token_hash,
+                                 reset_key_expiry = DATE_ADD(NOW(), INTERVAL 1 HOUR)
                              WHERE id = :id'
                         );
-                        $resetPassword->execute([
-                            ':password_hash' => password_hash($newPassword, PASSWORD_DEFAULT),
-                            ':recovery_hash' => hash('sha256', $newRecoveryCode),
+                        $saveToken->execute([
+                            ':token_hash' => $tokenHash,
                             ':id' => $user['id'],
                         ]);
-                    }
-                    $logAttempt = $db->prepare(
-                        'INSERT INTO admin_login_logs (user_id, username, success, ip_address, user_agent)
-                         VALUES (:user_id, :username, :success, :ip_address, :user_agent)'
-                    );
-                    $logAttempt->execute([
-                        ':user_id' => $validRecovery ? $user['id'] : null,
-                        ':username' => $username,
-                        ':success' => $validRecovery ? 1 : 0,
-                        ':ip_address' => $remoteAddress,
-                        ':user_agent' => $userAgent,
-                    ]);
-                    if ($validRecovery) {
-                        $_SESSION['admin_recovery_notice'] = $newRecoveryCode;
-                        $_SESSION['admin_password_reset_notice'] = 'Password reset. Sign in using your new password.';
-                        header('Location: index.php');
-                        exit;
+
+                        $serverName = (string) ($_SERVER['SERVER_NAME'] ?? '');
+                        if ($serverName !== '' && preg_match('/^[a-zA-Z0-9.-]+$/', $serverName)) {
+                            $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+                            $port = (int) ($_SERVER['SERVER_PORT'] ?? 0);
+                            $portSuffix = $port > 0 && !(($scheme === 'http' && $port === 80) || ($scheme === 'https' && $port === 443))
+                                ? ':' . $port
+                                : '';
+                            $basePath = dirname(dirname((string) ($_SERVER['SCRIPT_NAME'] ?? '/admin/index.php')));
+                            $basePath = $basePath === '\\' || $basePath === '.' ? '' : rtrim(str_replace('\\', '/', $basePath), '/');
+                            $resetUrl = $scheme . '://' . $serverName . $portSuffix . $basePath
+                                . '/admin/reset_password?token=' . rawurlencode($token);
+
+                            try {
+                                require_once __DIR__ . '/../includes/password_reset_mailer.php';
+                                sendAdminPasswordResetEmail($email, $resetUrl);
+                            } catch (Throwable $e) {
+                                $db->prepare(
+                                    'UPDATE admin_users SET password_reset_key = NULL, reset_key_expiry = NULL
+                                     WHERE id = :id AND password_reset_key = :token_hash'
+                                )->execute([
+                                    ':id' => $user['id'],
+                                    ':token_hash' => $tokenHash,
+                                ]);
+                                error_log('Admin password reset email could not be sent: ' . $e->getMessage());
+                            }
+                        } else {
+                            $db->prepare(
+                                'UPDATE admin_users SET password_reset_key = NULL, reset_key_expiry = NULL WHERE id = :id'
+                            )->execute([':id' => $user['id']]);
+                            error_log('Admin password reset email could not be sent: invalid server name configuration.');
+                        }
                     }
 
-                    $errorMessage = 'The username or recovery code is incorrect.';
+                    $resetRequestMessage = 'If an account uses that email address and email delivery is available, reset instructions will arrive shortly. The link expires in one hour.';
+                } else {
+                    $errorMessage = 'Enter a valid email address.';
                 }
             } elseif (!preg_match('/^[a-zA-Z0-9_.-]{3,64}$/', $username)) {
                 $errorMessage = 'Use a username of 3–64 letters, numbers, dots, underscores, or hyphens.';
@@ -131,8 +162,10 @@ try {
                 $errorMessage = 'Choose a password with at least 12 characters.';
             } elseif (!$setupMode && $password === '') {
                 $errorMessage = 'Enter your password.';
-            } elseif ($setupMode && $email !== '' && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                $errorMessage = 'Enter a valid email address or leave the field empty.';
+            } elseif ($setupMode && (!filter_var($email, FILTER_VALIDATE_EMAIL) || strlen($email) > 190)) {
+                $errorMessage = 'Enter a valid email address (maximum 190 characters).';
+            } elseif ($setupMode && ($firstName === '' || strlen($firstName) > 100 || $lastName === '' || strlen($lastName) > 100)) {
+                $errorMessage = 'Enter your first and last name (maximum 100 characters each).';
             } else {
                 if ($setupMode) {
                     $lockAcquired = (int) $db->query("SELECT GET_LOCK('kabc_menu_admin_setup', 5)")->fetchColumn() === 1;
@@ -145,16 +178,16 @@ try {
                                 $errorMessage = 'An admin account has already been created. Please sign in.';
                             } else {
                                 $db->beginTransaction();
-                                $recoveryCode = bin2hex(random_bytes(32));
                                 $createUser = $db->prepare(
-                                    'INSERT INTO admin_users (username, password_hash, password_recovery_hash, email)
-                                     VALUES (:username, :password_hash, :recovery_hash, :email)'
+                                    'INSERT INTO admin_users (username, firstName, lastName, password_hash, email)
+                                     VALUES (:username, :first_name, :last_name, :password_hash, :email)'
                                 );
                                 $createUser->execute([
                                     ':username' => $username,
+                                    ':first_name' => $firstName,
+                                    ':last_name' => $lastName,
                                     ':password_hash' => password_hash($password, PASSWORD_DEFAULT),
-                                    ':recovery_hash' => hash('sha256', $recoveryCode),
-                                    ':email' => $email !== '' ? $email : null,
+                                    ':email' => $email,
                                 ]);
                                 $userId = (int) $db->lastInsertId();
                                 $logSetup = $db->prepare(
@@ -168,7 +201,6 @@ try {
                                     ':user_agent' => substr((string) ($_SERVER['HTTP_USER_AGENT'] ?? ''), 0, 255),
                                 ]);
                                 $db->commit();
-                                $_SESSION['admin_recovery_notice'] = $recoveryCode;
                                 $setupMode = false;
                             }
                         } catch (PDOException $e) {
@@ -279,11 +311,8 @@ unset($_SESSION['admin_password_reset_notice']);
         <?php if ($passwordResetNotice !== ''): ?>
             <div class="notice success" role="status"><?= adminEscape($passwordResetNotice) ?></div>
         <?php endif; ?>
-        <?php if ($recoveryNotice !== ''): ?>
-            <div class="notice success recovery-code" role="alert">
-                <strong>Save this recovery code now. It will not be shown again.</strong>
-                <code><?= adminEscape($recoveryNotice) ?></code>
-            </div>
+        <?php if ($resetRequestMessage !== ''): ?>
+            <div class="notice success" role="status"><?= adminEscape($resetRequestMessage) ?></div>
         <?php endif; ?>
 
         <form method="post" class="admin-form">
@@ -293,8 +322,12 @@ unset($_SESSION['admin_password_reset_notice']);
             <input id="username" name="username" type="text" minlength="3" placeholder="Enter username" maxlength="64" autocomplete="username" required value="<?= adminEscape($_POST['username'] ?? '') ?>">
 
             <?php if ($setupMode): ?>
-                <label for="email">Email <span class="muted">(optional)</span></label>
-                <input id="email" name="email" type="email" maxlength="190" placeholder="Enter email" autocomplete="email" value="<?= adminEscape($_POST['email'] ?? '') ?>">
+                <label for="firstName">First name</label>
+                <input id="firstName" name="firstName" type="text" maxlength="100" autocomplete="given-name" required value="<?= adminEscape($_POST['firstName'] ?? '') ?>">
+                <label for="lastName">Last name</label>
+                <input id="lastName" name="lastName" type="text" maxlength="100" autocomplete="family-name" required value="<?= adminEscape($_POST['lastName'] ?? '') ?>">
+                <label for="email">Email</label>
+                <input id="email" name="email" type="email" maxlength="190" placeholder="Enter account email" autocomplete="email" required value="<?= adminEscape($_POST['email'] ?? '') ?>">
             <?php endif; ?>
 
             <label for="password"><?= $setupMode ? 'Password (12+ characters)' : 'Password' ?></label>
@@ -304,19 +337,13 @@ unset($_SESSION['admin_password_reset_notice']);
         </form>
         <?php if (!$setupMode): ?>
             <details class="reset-password">
-                <summary>Reset password with recovery code</summary>
+                <summary>Forgot your password?</summary>
                 <form method="post" class="admin-form">
                     <input type="hidden" name="csrf_token" value="<?= adminEscape(adminCsrfToken()) ?>">
-                    <input type="hidden" name="action" value="reset_password">
-                    <label for="reset_username">Username</label>
-                    <input id="reset_username" name="username" type="text" maxlength="64" autocomplete="username" required>
-                    <label for="recovery_code">Recovery code</label>
-                    <input id="recovery_code" name="recovery_code" type="text" minlength="64" maxlength="64" autocomplete="off" required>
-                    <label for="new_password">New password (12+ characters)</label>
-                    <input id="new_password" name="new_password" type="password" minlength="12" autocomplete="new-password" required>
-                    <label for="confirm_password">Confirm new password</label>
-                    <input id="confirm_password" name="confirm_password" type="password" minlength="12" autocomplete="new-password" required>
-                    <button class="button primary full-width" type="submit">Reset password</button>
+                    <input type="hidden" name="action" value="request_password_reset">
+                    <label for="reset_email">Account email</label>
+                    <input id="reset_email" name="email" type="email" maxlength="190" autocomplete="email" required>
+                    <button class="button primary full-width" type="submit">Email reset link</button>
                 </form>
             </details>
         <?php endif; ?>
