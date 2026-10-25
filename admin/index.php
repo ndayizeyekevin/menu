@@ -253,7 +253,7 @@ unset($_SESSION['admin_password_reset_notice']);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= $setupMode ? 'Set up admin' : 'Admin sign in' ?> | KABC Hotel</title>
     <script src="../assets/js/admin_theme.js"></script>
-    <link rel="stylesheet" href="../assets/css/admin.css">
+    <link rel="stylesheet" href="../assets/css/admin.css?v=7">
     <link rel="icon" type="image/png" href="../img/icon.png">
 </head>
 <body class="login-page">

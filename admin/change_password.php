@@ -69,7 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <title>Change password | KABC Hotel</title>
     <link rel="icon" type="image/png" href="../img/icon.png">
     <script src="../assets/js/admin_theme.js"></script>
-    <link rel="stylesheet" href="../assets/css/admin.css">
+    <link rel="stylesheet" href="../assets/css/admin.css?v=7">
 </head>
 <body>
 <div class="admin-layout">

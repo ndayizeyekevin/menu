@@ -157,7 +157,7 @@ try {
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-rc.0/css/select2.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="../assets/css/admin_menu_image_upload.css" rel="stylesheet">
-    <link href="../assets/css/admin.css" rel="stylesheet">
+    <link href="../assets/css/admin.css?v=7" rel="stylesheet">
 </head>
 <body>
 <div class="admin-layout">
