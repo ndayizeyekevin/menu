@@ -1,7 +1,5 @@
 <?php
-require_once __DIR__ . '/../includes/DBController.php';
-
-session_start();
+require_once __DIR__ . '/includes/require_admin.php';
 
 $csrfSessionKey = 'menu_image_upload_csrf';
 if (!isset($_SESSION[$csrfSessionKey])) {
@@ -158,11 +156,14 @@ try {
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-rc.0/css/select2.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="../assets/css/admin_menu_image_upload.css" rel="stylesheet">
-
+    <link href="../assets/css/admin.css" rel="stylesheet">
 </head>
 <body>
-    <div class="page-wrapper">
-        <div class="panel">
+<div class="admin-layout">
+    <?php require __DIR__ . '/includes/sidebar.php'; ?>
+    <main class="admin-main">
+        <div class="page-wrapper">
+          <div class="panel">
             <h1>Upload Menu Image</h1>
             <p class="page-subtitle">Choose a menu item and upload an image. The image will be stored in <code>../uploads</code> and the menu's <code>image_path</code> column will be updated.</p>
 
@@ -217,7 +218,9 @@ try {
                     <?php endif; ?>
                 </div>
             </div>
+          </div>
         </div>
+    </main>
     </div>
     <div id="spinnerOverlay" class="spinner-overlay">
         <div class="spinner"></div>
