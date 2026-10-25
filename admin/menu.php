@@ -55,20 +55,20 @@ try {
             <div class="notice <?= $flash['type'] === 'success' ? 'success' : 'error' ?>" role="status"><?= adminEscape($flash['message']) ?></div>
         <?php endif; ?>
 
-        <form class="search-form" method="get">
+        <form class="search-form" id="menuSearchForm" method="get">
             <label class="visually-hidden" for="menuSearch">Search menu</label>
             <input id="menuSearch" name="q" type="search" value="<?= adminEscape($search) ?>" placeholder="Search by item or description">
             <button class="button primary" type="submit">Search</button>
-            <?php if ($search !== ''): ?><a class="button" href="menu.php">Clear</a><?php endif; ?>
+            <a class="button" id="clearMenuSearch" href="menu.php"<?= $search === '' ? ' hidden' : '' ?>>Clear</a>
         </form>
 
         <section class="admin-card table-wrap">
-            <?php if (count($menuItems) === 200): ?>
-                <p class="muted">Showing up to 200 results. Narrow your search for other items.</p>
-            <?php endif; ?>
+            <p class="muted" id="menuSearchStatus" aria-live="polite">
+                <?= count($menuItems) === 200 ? 'Showing up to 200 results. Narrow your search for other items.' : count($menuItems) . ' items found.' ?>
+            </p>
             <table class="admin-table">
                 <thead><tr><th>Item</th><th>Description</th><th>Price</th><th>Image</th><th></th></tr></thead>
-                <tbody>
+                <tbody id="menuResults">
                 <?php foreach ($menuItems as $item): ?>
                     <tr>
                         <td><?= adminEscape($item['menu_name']) ?></td>
@@ -84,5 +84,6 @@ try {
         </section>
     </main>
 </div>
+<script src="../assets/js/admin_menu_search.js"></script>
 </body>
 </html>
