@@ -12,7 +12,6 @@
             aria-controls="adminSidebarPanel"
         >
             <span class="sidebar-toggle-icon" aria-hidden="true">☰</span>
-            <span>Menu</span>
         </button>
     </div>
     <div class="admin-sidebar-panel" id="adminSidebarPanel">
