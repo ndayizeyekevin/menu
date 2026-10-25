@@ -360,6 +360,7 @@ body {
 .menu-footer a:hover {
     text-decoration: none;
     color: #1f8549 !important;
+    cursor: pointer;
 }
 
 .menu-footer span {
