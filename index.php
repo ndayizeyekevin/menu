@@ -88,7 +88,7 @@ $landingCsrfToken = adminCsrfToken();
             <p class="eyebrow eyebrow-dark"><span></span> KABC HOTEL ADMIN</p>
             <h2 id="loginDialogTitle">Welcome back.</h2>
             <p class="login-dialog-copy">Sign in to manage menu items and images.</p>
-            <form class="landing-login-form" action="admin/index.php" method="post">
+            <form class="landing-login-form" action="admin/" method="post">
                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($landingCsrfToken, ENT_QUOTES, 'UTF-8') ?>">
                 <input type="hidden" name="action" value="login">
                 <label for="landingUsername">Username</label>
