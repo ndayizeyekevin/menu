@@ -207,12 +207,12 @@ if ($selectedMenuId !== '') {
             <form id="imageUploadForm" method="post" enctype="multipart/form-data">
                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken, ENT_QUOTES, 'UTF-8') ?>">
                 <div class="mb-3">
-                    <label for="menuSearch" class="form-label">Search menu items</label>
+                    <label for="menuSearch" class="form-label">Choose a menu item</label>
                     <input
                         class="form-control"
                         type="search"
                         id="menuSearch"
-                        placeholder="Start typing a dish name..."
+                        placeholder="Click to browse items or start typing..."
                         autocomplete="off"
                         role="combobox"
                         aria-autocomplete="list"
@@ -223,7 +223,7 @@ if ($selectedMenuId !== '') {
                         required
                     >
                     <input type="hidden" id="menu_id" name="menu_id" value="<?= htmlspecialchars($selectedMenuId, ENT_QUOTES, 'UTF-8') ?>">
-                    <div class="form-text" id="menuSearchHelp" aria-live="polite">Type a name and choose a matching menu item.</div>
+                    <div class="form-text" id="menuSearchHelp" aria-live="polite">Click to browse the menu, or type to filter items.</div>
                     <ul class="menu-search-results" id="menuSearchResults" role="listbox" hidden></ul>
                     <div id="menuItemData" hidden>
                         <?php foreach ($menuItems as $item): ?>

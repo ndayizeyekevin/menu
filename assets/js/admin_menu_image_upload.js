@@ -42,31 +42,25 @@
 
     function renderOptions(query) {
         var normalized = query.trim().toLocaleLowerCase();
-        selectedMenuId.value = '';
-        search.setCustomValidity('');
-        updateSelectedItem();
-
-        if (normalized === '') {
-            searchHelp.textContent = 'Type a name and choose a matching menu item.';
-            closeResults();
-            return [];
-        }
-
         var matches = allOptions.filter(function (item) {
             return item.label.toLocaleLowerCase().includes(normalized);
-        }).slice(0, 10);
-        var totalMatches = allOptions.filter(function (item) {
-            return item.label.toLocaleLowerCase().includes(normalized);
-        }).length;
+        });
 
         resultsList.replaceChildren();
-        if (matches.length === 0) {
+        if (normalized !== '' && matches.length === 0) {
             var emptyResult = document.createElement('li');
             emptyResult.className = 'menu-search-empty';
             emptyResult.textContent = 'No menu item matches “' + query.trim() + '”.';
             emptyResult.setAttribute('role', 'option');
             resultsList.append(emptyResult);
             searchHelp.textContent = 'No matching menu items. Check the spelling or try another name.';
+        } else if (matches.length === 0) {
+            var noItems = document.createElement('li');
+            noItems.className = 'menu-search-empty';
+            noItems.textContent = 'There are no menu items to choose from.';
+            noItems.setAttribute('role', 'option');
+            resultsList.append(noItems);
+            searchHelp.textContent = 'There are no menu items available.';
         } else {
             matches.forEach(function (item, index) {
                 var result = document.createElement('li');
@@ -81,8 +75,8 @@
                 });
                 resultsList.append(result);
             });
-            searchHelp.textContent = totalMatches > matches.length
-                ? 'Showing the first ' + matches.length + ' of ' + totalMatches + ' matches. Use the arrow keys or choose an item.'
+            searchHelp.textContent = normalized === ''
+                ? 'Showing all ' + matches.length + ' menu items. Type to filter, or choose an item.'
                 : matches.length + (matches.length === 1 ? ' matching menu item. Use the arrow keys or choose it.' : ' matching menu items. Use the arrow keys or choose one.');
         }
 
@@ -139,7 +133,21 @@
     var visibleMatches = [];
     search.addEventListener('input', function () {
         selectedMenuId.value = '';
+        search.setCustomValidity('');
+        updateSelectedItem();
         visibleMatches = renderOptions(search.value);
+    });
+    function openPicker() {
+        if (selectedMenuId.value) {
+            search.select();
+            visibleMatches = renderOptions('');
+        } else {
+            visibleMatches = renderOptions(search.value);
+        }
+    }
+    search.addEventListener('focus', openPicker);
+    search.addEventListener('click', function () {
+        if (resultsList.hidden) openPicker();
     });
     search.addEventListener('keydown', function (event) {
         if (event.key === 'ArrowDown' && !resultsList.hidden) {
