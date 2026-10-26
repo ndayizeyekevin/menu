@@ -63,7 +63,7 @@ $flash = $flash ?? adminConsumeFlash();
     <title>Admin dashboard | KABC Hotel</title>
     <link rel="icon" type="image/png" href="../img/icon.png">
     <script src="../assets/js/admin_theme.js"></script>
-    <link rel="stylesheet" href="../assets/css/admin.css?v=8">
+    <link rel="stylesheet" href="../assets/css/admin.css?v=10">
 </head>
 <body>
 <div class="admin-layout">

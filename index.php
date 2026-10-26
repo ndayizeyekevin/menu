@@ -15,7 +15,7 @@ $landingCsrfToken = adminCsrfToken();
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/landing.css">
+    <link rel="stylesheet" href="assets/css/landing.css?v=2">
 </head>
 <body>
     <header class="site-header">
@@ -103,5 +103,6 @@ $landingCsrfToken = adminCsrfToken();
 
     <?php require __DIR__ . '/includes/footer.php'; ?>
     <script src="assets/js/landing.js" defer></script>
+    <script src="assets/js/password_visibility.js?v=1" defer></script>
 </body>
 </html>

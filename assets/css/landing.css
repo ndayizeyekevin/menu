@@ -208,6 +208,29 @@ a {
     font: inherit;
 }
 
+.landing-login-form .password-field { position: relative; display: block; width: 100%; }
+.landing-login-form .password-field input { padding-right: 3.1rem; }
+.landing-login-form .password-visibility-toggle {
+    position: absolute;
+    top: 50%;
+    right: 7px;
+    display: grid;
+    width: 36px;
+    height: 36px;
+    transform: translateY(-50%);
+    place-items: center;
+    border: 0;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--landing-muted);
+    cursor: pointer;
+}
+.landing-login-form .password-visibility-toggle:hover { background: var(--landing-cream); color: var(--landing-forest); }
+.landing-login-form .password-visibility-toggle:focus-visible { outline: 2px solid var(--landing-forest-soft); outline-offset: 1px; }
+.landing-login-form .password-visibility-toggle svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.8; }
+.landing-login-form .password-eye-slash { display: none; }
+.landing-login-form .password-visibility-toggle[aria-pressed="true"] .password-eye-slash { display: block; }
+
 .landing-login-form input:focus {
     border-color: var(--landing-forest-soft);
     outline: 3px solid rgba(32, 75, 59, 0.14);

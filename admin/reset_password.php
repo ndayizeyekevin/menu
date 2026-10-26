@@ -98,7 +98,7 @@ if ($validToken && $errorMessage === '') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reset password | KABC Hotel</title>
     <script src="../assets/js/admin_theme.js"></script>
-    <link rel="stylesheet" href="../assets/css/admin.css?v=7">
+    <link rel="stylesheet" href="../assets/css/admin.css?v=10">
     <link rel="icon" type="image/png" href="../img/icon.png">
 </head>
 <body class="login-page">
@@ -132,5 +132,6 @@ if ($validToken && $errorMessage === '') {
             <a class="button primary full-width" href="index.php">Return to sign in</a>
         <?php endif; ?>
     </main>
+    <script src="../assets/js/password_visibility.js?v=1" defer></script>
 </body>
 </html>

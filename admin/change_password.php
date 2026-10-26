@@ -73,7 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <title>Change password | KABC Hotel</title>
     <link rel="icon" type="image/png" href="../img/icon.png">
     <script src="../assets/js/admin_theme.js"></script>
-    <link rel="stylesheet" href="../assets/css/admin.css?v=7">
+    <link rel="stylesheet" href="../assets/css/admin.css?v=10">
 </head>
 <body>
 <div class="admin-layout">
@@ -116,5 +116,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </section>
     </main>
 </div>
+    <script src="../assets/js/password_visibility.js?v=1" defer></script>
 </body>
 </html>

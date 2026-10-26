@@ -254,6 +254,32 @@ a { color: var(--admin-green); }
 
 .admin-form textarea { min-height: 110px; resize: vertical; }
 
+.password-field { position: relative; display: block; width: 100%; }
+.password-field input { padding-right: 3.1rem !important; }
+.password-visibility-toggle {
+    position: absolute;
+    top: 50%;
+    right: 8px;
+    display: grid;
+    width: 36px;
+    height: 36px;
+    transform: translateY(-50%);
+    place-items: center;
+    border: 0;
+    border-radius: 7px;
+    background: transparent;
+    color: #71839a;
+    cursor: pointer;
+}
+.password-visibility-toggle:hover { background: rgba(44, 127, 192, .1); color: #216ea9; }
+.password-visibility-toggle:focus-visible { outline: 2px solid #3888c3; outline-offset: 1px; }
+.password-visibility-toggle svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.8; }
+.password-eye-slash { display: none; }
+.password-visibility-toggle[aria-pressed="true"] .password-eye-slash { display: block; }
+:root[data-theme="dark"] .password-visibility-toggle { color: #a0afc0; }
+:root[data-theme="dark"] .password-visibility-toggle:hover { background: rgba(120, 191, 240, .12); color: #8bc9f2; }
+:root[data-theme="dark"] .password-visibility-toggle:focus-visible { outline-color: #78bff0; }
+
 .button {
     display: inline-flex;
     align-items: center;
@@ -1323,3 +1349,4 @@ a { color: #2476b8; }
     .upload-panel .image-preview-frame { min-height: 160px; }
     .upload-panel .image-preview-frame img { height: 180px; }
 }
+.admin-form .password-field input { padding-right: 3.1rem !important; }
