@@ -1269,7 +1269,8 @@ a { color: #2476b8; }
     border-radius: 0 0 9px 9px;
     background: #fff;
     box-shadow: 0 12px 24px rgba(21, 47, 72, .14);
-    list-style: none;
+    list-style: none !important;
+    padding-left: 5px !important;
 }
 .upload-panel .menu-search-option,
 .upload-panel .menu-search-empty { padding: 10px 12px; border-radius: 6px; color: #18334c; font-size: .9rem; }

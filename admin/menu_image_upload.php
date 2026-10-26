@@ -175,7 +175,7 @@ if ($selectedMenuId !== '') {
     <link href="../assets/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="../assets/css/admin_menu_image_upload.css" rel="stylesheet">
-    <link href="../assets/css/admin.css?v=8" rel="stylesheet">
+    <link href="../assets/css/admin.css?v=9" rel="stylesheet">
 </head>
 <body>
 <div class="admin-layout">
@@ -275,6 +275,6 @@ if ($selectedMenuId !== '') {
     <div id="spinnerOverlay" class="spinner-overlay">
         <div class="spinner"></div>
     </div>
-    <script src="../assets/js/admin_menu_image_upload.js"></script>
+    <script src="../assets/js/admin_menu_image_upload.js?v=2"></script>
 </body>
 </html>
