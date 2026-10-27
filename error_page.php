@@ -40,6 +40,8 @@ $basePath = $basePath === '' ? '' : $basePath;
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#102c24">
     <title><?= $statusCode ?> | KABC Hotel</title>
+    <link rel="stylesheet" href="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/assets/fontawesome/css/fontawesome.min.css">
+    <link rel="stylesheet" href="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/assets/fontawesome/css/solid.min.css">
     <link rel="icon" type="image/png" href="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/img/icon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -66,6 +68,8 @@ $basePath = $basePath === '' ? '' : $basePath;
         .button-secondary { border-color: rgba(244,240,230,.3); background: transparent; color: var(--paper); }
         .button-secondary:hover { background: rgba(244,240,230,.08); }
         .footnote { margin: 54px 0 0; color: rgba(244,240,230,.42); font-size: .72rem; letter-spacing: .04em; }
+        .fa-attribution { display: block; margin-top: 10px; color: rgba(244,240,230,.42); font-size: .65rem; }
+        .fa-attribution a { color: inherit; }
         @media (max-width: 480px) { main { padding: 32px 26px; } .code { top: 30px; right: 24px; } .eyebrow { margin-top: 58px; } .footnote { margin-top: 42px; } }
         @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; } }
     </style>
@@ -82,10 +86,11 @@ $basePath = $basePath === '' ? '' : $basePath;
         <h1><?= htmlspecialchars($page['title'], ENT_QUOTES, 'UTF-8') ?></h1>
         <p class="message"><?= htmlspecialchars($page['message'], ENT_QUOTES, 'UTF-8') ?></p>
         <div class="actions">
-            <a class="button" href="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/">Back to home <span aria-hidden="true">&nbsp;&rarr;</span></a>
+            <a class="button" href="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/">Back to home <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
             <a class="button button-secondary" href="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/full_menu">Explore the menu</a>
         </div>
         <p class="footnote">KABC HOTEL &nbsp;&middot;&nbsp; GATHER WELL. EAT JOYFULLY.</p>
+        <small class="fa-attribution">Icons by <a href="https://fontawesome.com" target="_blank" rel="noopener">Font Awesome</a>, CC BY 4.0.</small>
     </main>
 </body>
 </html>

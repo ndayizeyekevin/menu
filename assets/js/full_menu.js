@@ -13,7 +13,10 @@
         themeToggle.setAttribute('aria-label', 'Switch to ' + (isDark ? 'light' : 'dark') + ' theme');
 
         if (label) label.textContent = isDark ? 'Light theme' : 'Dark theme';
-        if (icon) icon.textContent = isDark ? '☼' : '☾';
+        if (icon) {
+            icon.classList.toggle('fa-sun', isDark);
+            icon.classList.toggle('fa-moon', !isDark);
+        }
     }
 
     updateThemeToggle();

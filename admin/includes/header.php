@@ -14,7 +14,7 @@
     </strong>
     <div class="admin-topbar-actions">
         <button class="theme-toggle" type="button" data-theme-toggle aria-label="Toggle color theme" aria-pressed="false">
-            <span class="theme-toggle-icon" aria-hidden="true">☾</span>
+            <i class="fa-solid fa-sun theme-toggle-icon" aria-hidden="true"></i>
             <span class="theme-toggle-label">Dark theme</span>
         </button>
         <div class="admin-account">
@@ -23,10 +23,10 @@
                 <span class="admin-account-name"><?= adminEscape($_SESSION['admin_username'] ?? 'Admin') ?></span>
             </div>
             <div class="admin-account-menu">
-                <a href="change_password.php"><span aria-hidden="true">⚙</span>Settings</a>
+                <a href="change_password.php"><i class="fa-solid fa-gear" aria-hidden="true"></i>Settings</a>
                 <form action="<?= adminEscape(rtrim(dirname($_SERVER['SCRIPT_NAME']), '/') . '/logout') ?>" method="post">
                     <input type="hidden" name="csrf_token" value="<?= adminEscape(adminCsrfToken()) ?>">
-                    <button type="submit"><span aria-hidden="true">⇥</span>Sign out</button>
+                    <button type="submit"><i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i>Sign out</button>
                 </form>
             </div>
         </div>

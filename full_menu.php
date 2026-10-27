@@ -109,14 +109,14 @@ function renderMenuColumn(array $categories): void
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="assets/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
-    <link href="assets/css/full_menu.css?v=4" rel="stylesheet">
+    <link href="assets/css/full_menu.css?v=5" rel="stylesheet">
 </head>
 <body>
     <header class="header">
         <div class="header-content">
-            <a class="header-home-link" href="./"><span aria-hidden="true">←</span> KABC HOTEL</a>
+            <a class="header-home-link" href="./"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> KABC HOTEL</a>
             <button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch to light theme" aria-pressed="true">
-                <span class="theme-toggle-icon" aria-hidden="true">☼</span>
+                <i class="fa-solid fa-sun theme-toggle-icon" aria-hidden="true"></i>
                 <span class="theme-toggle-label">Light theme</span>
             </button>
             <img src="./img/icon.png" alt="Menu icon">
@@ -126,7 +126,7 @@ function renderMenuColumn(array $categories): void
             <div class="search-wrap">
                 <input id="menuSearch" class="menu-search" type="search" placeholder="Search dishes, categories or descriptions…" aria-label="Search menu items">
             </div>
-            <a class="export-link" href="menu_table.php" target="_blank" rel="noopener">Download menu <span aria-hidden="true">↗</span></a>
+            <a class="export-link" href="menu_table.php" target="_blank" rel="noopener">Download menu <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a>
         </div>
     </header>
 
@@ -167,6 +167,6 @@ function renderMenuColumn(array $categories): void
     </div>
 
     <?php require __DIR__ . '/includes/footer.php'; ?>
-    <script src="assets/js/full_menu.js?v=2" defer></script>
+    <script src="assets/js/full_menu.js?v=3" defer></script>
 </body>
 </html>

@@ -284,13 +284,13 @@ unset($_SESSION['admin_password_reset_notice']);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= $setupMode ? 'Set up admin' : 'Admin sign in' ?> | KABC Hotel</title>
-    <script src="../assets/js/admin_theme.js"></script>
-    <link rel="stylesheet" href="../assets/css/admin.css?v=10">
+    <script src="../assets/js/admin_theme.js?v=2"></script>
+    <link rel="stylesheet" href="../assets/css/admin.css?v=11">
     <link rel="icon" type="image/png" href="../img/icon.png">
 </head>
 <body class="login-page">
     <button class="theme-toggle login-theme-toggle" type="button" data-theme-toggle aria-label="Toggle color theme" aria-pressed="false">
-        <span class="theme-toggle-icon" aria-hidden="true">☾</span>
+        <i class="fa-solid fa-sun theme-toggle-icon" aria-hidden="true"></i>
         <span class="theme-toggle-label">Dark theme</span>
     </button>
     <main class="login-card">
@@ -348,6 +348,7 @@ unset($_SESSION['admin_password_reset_notice']);
             </details>
         <?php endif; ?>
         <a class="login-public-link" href="../full_menu">View public menu</a>
+        <small class="fa-attribution">Icons by <a href="https://fontawesome.com" target="_blank" rel="noopener">Font Awesome</a>, CC BY 4.0.</small>
     </main>
     <script src="../assets/js/password_visibility.js?v=1" defer></script>
 </body>

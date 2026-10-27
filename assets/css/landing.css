@@ -1,3 +1,6 @@
+@import url("../fontawesome/css/fontawesome.min.css");
+@import url("../fontawesome/css/solid.min.css");
+
 :root {
     --landing-forest: #102c24;
     --landing-forest-deep: #0b211b;
@@ -95,7 +98,7 @@ a {
     background: rgba(255, 255, 255, 0.08);
 }
 
-.nav-menu-link span {
+.nav-menu-link .fa-solid {
     margin-left: 8px;
     color: var(--landing-leaf);
 }
@@ -363,7 +366,7 @@ a {
     background: #c7dfa9;
 }
 
-.button span {
+.button .fa-solid {
     font-size: 1.05rem;
 }
 

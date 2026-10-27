@@ -15,7 +15,7 @@ $landingCsrfToken = adminCsrfToken();
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/landing.css?v=2">
+    <link rel="stylesheet" href="assets/css/landing.css?v=3">
 </head>
 <body>
     <header class="site-header">
@@ -25,7 +25,7 @@ $landingCsrfToken = adminCsrfToken();
         </a>
         <nav class="site-nav" aria-label="Main navigation">
             <a href="#experience">Our table</a>
-            <a class="nav-menu-link" href="full_menu">Explore the menu <span aria-hidden="true">↗</span></a>
+            <a class="nav-menu-link" href="full_menu">Explore the menu <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a>
             <button class="nav-login-button" type="button" data-login-open>Admin sign in</button>
         </nav>
     </header>
@@ -43,8 +43,8 @@ $landingCsrfToken = adminCsrfToken();
                 <h1 id="hero-title">Gather well.<br><em>Eat joyfully.</em></h1>
                 <p class="hero-copy">Good food has a way of bringing us closer. Find your next favourite on the KABC Hotel menu.</p>
                 <div class="hero-actions">
-                    <a class="button button-primary" href="full_menu">Explore our menu <span aria-hidden="true">→</span></a>
-                    <a class="text-link" href="#experience">A little about us <span aria-hidden="true">↓</span></a>
+                    <a class="button button-primary" href="full_menu">Explore our menu <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+                    <a class="text-link" href="#experience">A little about us <i class="fa-solid fa-arrow-down" aria-hidden="true"></i></a>
                 </div>
                 <div class="hero-note">
                     <span class="note-rule"></span>
@@ -61,7 +61,7 @@ $landingCsrfToken = adminCsrfToken();
             </div>
             <div class="experience-copy">
                 <p>From the first look at the menu to the last bite, we believe the best moments are the ones we share.</p>
-                <a class="text-link text-link-dark" href="full_menu">Find something to love <span aria-hidden="true">→</span></a>
+                <a class="text-link text-link-dark" href="full_menu">Find something to love <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
             </div>
             <div class="experience-mark" aria-hidden="true">
                 <span>GOOD FOOD</span>
@@ -77,7 +77,7 @@ $landingCsrfToken = adminCsrfToken();
                 <p class="eyebrow"><span></span> YOUR NEXT FAVOURITE</p>
                 <h2 id="menu-title">Something for<br>every kind of craving.</h2>
             </div>
-            <a class="button button-light" href="full_menu">See the full menu <span aria-hidden="true">↗</span></a>
+            <a class="button button-light" href="full_menu">See the full menu <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a>
             <span class="invitation-decoration" aria-hidden="true">K</span>
         </section>
     </main>
@@ -95,7 +95,7 @@ $landingCsrfToken = adminCsrfToken();
                 <input id="landingUsername" name="username" type="text" minlength="3" maxlength="64" placeholder="Enter username" autocomplete="username" required>
                 <label for="landingPassword">Password</label>
                 <input id="landingPassword" name="password" type="password" placeholder="Enter password" autocomplete="current-password" required>
-                <button class="button button-primary" type="submit">Sign in <span aria-hidden="true">→</span></button>
+                <button class="button button-primary" type="submit">Sign in <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button>
             </form>
             <a class="login-recovery-link" href="admin/">Forgot your password?</a>
         </div>
