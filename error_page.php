@@ -68,8 +68,6 @@ $basePath = $basePath === '' ? '' : $basePath;
         .button-secondary { border-color: rgba(244,240,230,.3); background: transparent; color: var(--paper); }
         .button-secondary:hover { background: rgba(244,240,230,.08); }
         .footnote { margin: 54px 0 0; color: rgba(244,240,230,.42); font-size: .72rem; letter-spacing: .04em; }
-        .fa-attribution { display: block; margin-top: 10px; color: rgba(244,240,230,.42); font-size: .65rem; }
-        .fa-attribution a { color: inherit; }
         @media (max-width: 480px) { main { padding: 32px 26px; } .code { top: 30px; right: 24px; } .eyebrow { margin-top: 58px; } .footnote { margin-top: 42px; } }
         @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; } }
     </style>
@@ -90,7 +88,6 @@ $basePath = $basePath === '' ? '' : $basePath;
             <a class="button button-secondary" href="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/full_menu">Explore the menu</a>
         </div>
         <p class="footnote">KABC HOTEL &nbsp;&middot;&nbsp; GATHER WELL. EAT JOYFULLY.</p>
-        <small class="fa-attribution">Icons by <a href="https://fontawesome.com" target="_blank" rel="noopener">Font Awesome</a>, CC BY 4.0.</small>
     </main>
 </body>
 </html>

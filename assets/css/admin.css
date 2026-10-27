@@ -1353,5 +1353,3 @@ a { color: #2476b8; }
     .upload-panel .image-preview-frame img { height: 180px; }
 }
 .admin-form .password-field input { padding-right: 3.1rem !important; }
-.fa-attribution { display: block; margin-top: 12px; color: var(--admin-muted); font-size: .68rem; }
-.fa-attribution a { color: inherit; }

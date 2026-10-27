@@ -131,7 +131,6 @@ if ($validToken && $errorMessage === '') {
         <?php else: ?>
             <a class="button primary full-width" href="index.php">Return to sign in</a>
         <?php endif; ?>
-        <small class="fa-attribution">Icons by <a href="https://fontawesome.com" target="_blank" rel="noopener">Font Awesome</a>, CC BY 4.0.</small>
     </main>
     <script src="../assets/js/password_visibility.js?v=1" defer></script>
 </body>

@@ -348,7 +348,6 @@ unset($_SESSION['admin_password_reset_notice']);
             </details>
         <?php endif; ?>
         <a class="login-public-link" href="../full_menu">View public menu</a>
-        <small class="fa-attribution">Icons by <a href="https://fontawesome.com" target="_blank" rel="noopener">Font Awesome</a>, CC BY 4.0.</small>
     </main>
     <script src="../assets/js/password_visibility.js?v=1" defer></script>
 </body>

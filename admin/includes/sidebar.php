@@ -24,7 +24,6 @@
         </nav>
         <div class="admin-sidebar-footer">
             <a class="sidebar-public-link" href="../full_menu"><i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>View public site</a>
-            <small class="fa-attribution">Icons by <a href="https://fontawesome.com" target="_blank" rel="noopener">Font Awesome</a>, CC BY 4.0.</small>
         </div>
     </div>
 </aside>
