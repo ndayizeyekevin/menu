@@ -87,6 +87,7 @@ $basePath = $basePath === '' ? '' : $basePath;
             <a class="button" href="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/">Back to home <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
             <a class="button button-secondary" href="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/full_menu">Explore the menu</a>
         </div>
+        
         <p class="footnote">KABC HOTEL &nbsp;&middot;&nbsp; GATHER WELL. EAT JOYFULLY.</p>
     </main>
 </body>
