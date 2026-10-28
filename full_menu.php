@@ -120,7 +120,7 @@ function renderMenuColumn(array $categories): void
                 <span class="theme-toggle-label">Light theme</span>
             </button>
             <img src="./img/icon.png" alt="Menu icon">
-            <h1>OUR MENU </h1>
+            <h1>OUR MENU</h1>
             <p class="header-sub">Fresh dishes & drinks from our kitchen</p>
             <div class="header-line"></div>
             <div class="search-wrap">
