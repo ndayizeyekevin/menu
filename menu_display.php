@@ -246,6 +246,7 @@ foreach ($menuItems as $item) {
             box-shadow: 0 4px 15px rgba(26, 122, 62, 0.3);
         }
 
+        
         .category-title-group {
             flex: 1;
         }
