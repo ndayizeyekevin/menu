@@ -302,6 +302,7 @@ foreach ($menuItems as $item) {
     <p class="pdf-status" id="pdfStatus" role="status" hidden></p>
 
     <div class="sheet" id="menuSheet">
+        
         <div class="header">
             <h1>OUR MENU</h1>
         <p>Flat table export with counter, item, subcategory and price</p>
