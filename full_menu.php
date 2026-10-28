@@ -145,6 +145,7 @@ function renderMenuColumn(array $categories): void
             <div id="searchState" class="state-box" style="display:none;">
                 <h2>No matching menu items</h2>
                 <p>Try searching for a dish name or description.</p>
+                
             </div>
             <div class="menu-columns">
                 <?php
