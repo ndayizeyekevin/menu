@@ -38,6 +38,7 @@ $landingCsrfToken = adminCsrfToken();
                 <div class="hero-sun"></div>
                 <div class="hero-horizon"></div>
             </div>
+            
             <div class="hero-content">
                 <p class="eyebrow"><span></span> KABC HOTEL</p>
                 <h1 id="hero-title">Gather well.<br><em>Eat joyfully.</em></h1>
