@@ -19,6 +19,7 @@ A PHP and MySQL application for the KABC Hotel public menu and its admin tools.
 
 ## Local setup (XAMPP)
 
+
 1. Place the project in the Apache document root, for example `C:\xampp\htdocs\kabc_menu`.
 2. Create a MySQL database and import the KABC menu schema. The schema should include the existing `menu`, `category`, and `subcategory` tables; this repository does not include their database dump.
 3. Set the database host, port, database name, username, and password in `config/database.php`.
