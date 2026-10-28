@@ -122,6 +122,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!is_string($redirectPath) || $redirectPath === '') {
         $redirectPath = $_SERVER['SCRIPT_NAME'];
     }
+    if ($messageClass === 'error' && $menuId !== '') {
+        $redirectPath .= '?selected_menu_id=' . rawurlencode($menuId);
+    }
     header('Location: ' . $redirectPath, true, 303);
     exit;
 }
@@ -144,6 +147,22 @@ try {
     $message = 'Menu items could not be loaded. Please try again later.';
     $messageClass = 'error';
 }
+
+$selectedMenuId = isset($_GET['selected_menu_id']) && is_string($_GET['selected_menu_id'])
+    ? $_GET['selected_menu_id']
+    : '';
+$selectedMenuName = '';
+if ($selectedMenuId !== '') {
+    foreach ($menuItems as $item) {
+        if ((string) $item['menu_id'] === $selectedMenuId) {
+            $selectedMenuName = (string) $item['menu_name'];
+            break;
+        }
+    }
+    if ($selectedMenuName === '') {
+        $selectedMenuId = '';
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -152,12 +171,11 @@ try {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Upload menu image | KABC Hotel</title>
     <link rel="icon" type="image/png" href="../img/icon.png">
-    <script src="../assets/js/admin_theme.js"></script>
+    <script src="../assets/js/admin_theme.js?v=2"></script>
     <link href="../assets/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-rc.0/css/select2.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="../assets/css/admin_menu_image_upload.css" rel="stylesheet">
-    <link href="../assets/css/admin.css?v=7" rel="stylesheet">
+    <link href="../assets/css/admin.css?v=11" rel="stylesheet">
 </head>
 <body>
 <div class="admin-layout">
@@ -185,55 +203,78 @@ try {
             <?php endif; ?>
 
             <section class="admin-card upload-panel">
-            <p class="page-subtitle">Images are stored in the shared <code>uploads</code> folder; the menu item's image path is updated after upload.</p>
-            <form method="post" enctype="multipart/form-data">
+            <p class="page-subtitle">Search for a menu item, check its current photo, then choose the replacement image.</p>
+            <form id="imageUploadForm" method="post" enctype="multipart/form-data">
                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken, ENT_QUOTES, 'UTF-8') ?>">
                 <div class="mb-3">
-                    <label for="menu_id" class="form-label">Menu Item</label>
-                    <select class="form-select" id="menu_id" name="menu_id" required>
-                        <option value="">Select a menu item</option>
+                    <label for="menuSearch" class="form-label">Choose a menu item</label>
+                    <input
+                        class="form-control"
+                        type="search"
+                        id="menuSearch"
+                        placeholder="Click to browse items or start typing..."
+                        autocomplete="off"
+                        role="combobox"
+                        aria-autocomplete="list"
+                        aria-expanded="false"
+                        aria-controls="menuSearchResults"
+                        aria-describedby="menuSearchHelp"
+                        value="<?= htmlspecialchars($selectedMenuName, ENT_QUOTES, 'UTF-8') ?>"
+                        required
+                    >
+                    <input type="hidden" id="menu_id" name="menu_id" value="<?= htmlspecialchars($selectedMenuId, ENT_QUOTES, 'UTF-8') ?>">
+                    <div class="form-text" id="menuSearchHelp" aria-live="polite">Click to browse the menu, or type to filter items.</div>
+                    <ul class="menu-search-results" id="menuSearchResults" role="listbox" hidden></ul>
+                    <div id="menuItemData" hidden>
                         <?php foreach ($menuItems as $item): ?>
-                            <option value="<?= htmlspecialchars($item['menu_id'], ENT_QUOTES, 'UTF-8') ?>"
-                                <?= isset($_POST['menu_id']) && $_POST['menu_id'] === (string) $item['menu_id'] ? 'selected' : '' ?>>
-                                <?= htmlspecialchars($item['menu_name'], ENT_QUOTES, 'UTF-8') ?>
-                            </option>
+                            <?php
+                            $itemImagePath = trim((string) ($item['image_path'] ?? ''));
+                            $itemImageUrl = $itemImagePath === '' ? '' : '../' . ltrim($itemImagePath, '/');
+                            ?>
+                            <span
+                                data-menu-id="<?= htmlspecialchars((string) $item['menu_id'], ENT_QUOTES, 'UTF-8') ?>"
+                                data-menu-name="<?= htmlspecialchars((string) $item['menu_name'], ENT_QUOTES, 'UTF-8') ?>"
+                                data-image="<?= htmlspecialchars($itemImageUrl, ENT_QUOTES, 'UTF-8') ?>"
+                            ></span>
                         <?php endforeach; ?>
-                    </select>
+                    </div>
                 </div>
                 <div class="mb-4">
-                    <label for="menu_image" class="form-label">Menu Image</label>
+                    <label for="menu_image" class="form-label">Choose image</label>
                     <input class="form-control" type="file" id="menu_image" name="menu_image" accept="image/jpeg,image/png,image/gif,image/webp" required>
-                    <div class="form-text text-light">Maximum file size: 5 MB.</div>
+                    <div class="form-text">JPG, PNG, GIF, or WEBP. Maximum file size: 5 MB.</div>
+                    <div class="upload-validation" id="uploadValidation" role="alert" hidden></div>
                 </div>
-                <button class="btn btn-primary" type="submit">Upload Image</button>
-                <a class="btn btn-secondary ms-2" href="../full_menu">Back to Image Menu</a>
+                <div class="upload-previews" aria-live="polite">
+                    <article class="image-preview-card">
+                        <h2>Current image</h2>
+                        <div class="image-preview-frame" id="currentImageFrame">
+                            <img id="currentImagePreview" alt="Current image for the selected menu item" hidden>
+                            <p id="currentImageEmpty">Choose a menu item to see its current image.</p>
+                        </div>
+                        <p class="image-preview-caption" id="currentImageCaption"></p>
+                    </article>
+                    <article class="image-preview-card">
+                        <h2>New image</h2>
+                        <div class="image-preview-frame">
+                            <img id="newImagePreview" alt="Preview of the image you selected" hidden>
+                            <p id="newImageEmpty">Your chosen image will appear here.</p>
+                        </div>
+                        <p class="image-preview-caption" id="newImageCaption"></p>
+                    </article>
+                </div>
+                <p class="replacement-note" id="replacementNote" hidden></p>
+                <div class="upload-actions">
+                    <button class="btn btn-primary" id="uploadSubmit" type="submit">Upload image</button>
+                    <a class="btn btn-secondary" href="../full_menu">View public menu</a>
+                </div>
             </form>
-
-            <div class="preview-row">
-                <div class="menu-preview">
-                    <h2>Upload Guidelines</h2>
-                    <div class="menu-preview-item">Allowed formats: JPG, PNG, GIF, WEBP</div>
-                    <div class="menu-preview-item">Images are stored in the shared <code>uploads</code> folder under the site root.</div>
-                    <div class="menu-preview-item">The database column <code>image_path</code> is updated with the relative path to the stored image.</div>
-                    <div class="menu-preview-item">If the selected menu item already has an image, the new upload replaces the database reference, but not the old file.</div>
-                </div>
-                <div class="menu-preview">
-                    <h2>Existing Menu Count</h2>
-                    <div class="menu-preview-item">Total menu items: <?= count($menuItems) ?></div>
-                    <?php if (!empty($menuItems)): ?>
-                        <div class="menu-preview-item">Selected item preview uses current stored path.</div>
-                    <?php endif; ?>
-                </div>
-            </div>
             </section>
     </main>
     </div>
     <div id="spinnerOverlay" class="spinner-overlay">
         <div class="spinner"></div>
     </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-rc.0/js/select2.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="../assets/js/admin_menu_image_upload.js"></script>
+    <script src="../assets/js/admin_menu_image_upload.js?v=2"></script>
 </body>
 </html>

@@ -6,6 +6,12 @@ SetEnv VSDC_BASE_URL "http://197.243.26.62:8080/rraVsdcSandbox2.1.2.3.7/"
 RewriteEngine On
 RewriteBase /kabc_menu/
 
+ErrorDocument 403 /kabc_menu/403.php
+ErrorDocument 404 /kabc_menu/404.php
+ErrorDocument 500 /kabc_menu/500.php
+ErrorDocument 502 /kabc_menu/502.php
+ErrorDocument 503 /kabc_menu/503.php
+
 RewriteCond %{THE_REQUEST} \s/+(.+?)\.php(?:[\s?]) [NC]
 RewriteRule ^(.+)\.php$ $1 [R=301,L,NC]
 

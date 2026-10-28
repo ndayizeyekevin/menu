@@ -1,3 +1,6 @@
+@import url("../fontawesome/css/fontawesome.min.css");
+@import url("../fontawesome/css/solid.min.css");
+
 :root {
     --landing-forest: #102c24;
     --landing-forest-deep: #0b211b;
@@ -95,7 +98,7 @@ a {
     background: rgba(255, 255, 255, 0.08);
 }
 
-.nav-menu-link span {
+.nav-menu-link .fa-solid {
     margin-left: 8px;
     color: var(--landing-leaf);
 }
@@ -207,6 +210,29 @@ a {
     color: var(--landing-ink);
     font: inherit;
 }
+
+.landing-login-form .password-field { position: relative; display: block; width: 100%; }
+.landing-login-form .password-field input { padding-right: 3.1rem; }
+.landing-login-form .password-visibility-toggle {
+    position: absolute;
+    top: 50%;
+    right: 7px;
+    display: grid;
+    width: 36px;
+    height: 36px;
+    transform: translateY(-50%);
+    place-items: center;
+    border: 0;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--landing-muted);
+    cursor: pointer;
+}
+.landing-login-form .password-visibility-toggle:hover { background: var(--landing-cream); color: var(--landing-forest); }
+.landing-login-form .password-visibility-toggle:focus-visible { outline: 2px solid var(--landing-forest-soft); outline-offset: 1px; }
+.landing-login-form .password-visibility-toggle svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.8; }
+.landing-login-form .password-eye-slash { display: none; }
+.landing-login-form .password-visibility-toggle[aria-pressed="true"] .password-eye-slash { display: block; }
 
 .landing-login-form input:focus {
     border-color: var(--landing-forest-soft);
@@ -340,7 +366,7 @@ a {
     background: #c7dfa9;
 }
 
-.button span {
+.button .fa-solid {
     font-size: 1.05rem;
 }
 

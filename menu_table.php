@@ -32,6 +32,7 @@ foreach ($menuItems as $item) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Menu Table Export</title>
+    <link rel="shortcut icon" href="./img/icon.png" type="image/x-icon">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -207,7 +208,30 @@ foreach ($menuItems as $item) {
             color: var(--text-dim);
         }
 
+        .pdf-status {
+            max-width: 1280px;
+            margin: 0 auto 12px;
+            color: #ffd88d;
+            font-size: 0.9rem;
+        }
+        .btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.55;
+        }
+
         @media print {
+            @page {
+                size: A4 landscape;
+                margin: 12mm;
+            }
+
+            html, body {
+                background: #fff !important;
+                color: #111 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
             body {
                 padding: 0;
             }
@@ -216,18 +240,66 @@ foreach ($menuItems as $item) {
                 display: none;
             }
 
+            .pdf-status {
+                display: none !important;
+            }
+
             .sheet {
                 max-width: none;
                 border: 0;
+                background: #fff;
+            }
+
+            .header {
+                background: #fff;
+                border-color: #d8e2dc;
+            }
+
+            .header h1,
+            .empty-state h2,
+            .item-price {
+                color: #1a7a3e;
+            }
+
+            .header p,
+            .item-desc {
+                color: #555;
+            }
+
+            table.menu-table,
+            .menu-table td {
+                background: #fff;
+                color: #111;
+            }
+
+            .menu-table th,
+            .menu-table .subcategory-row {
+                background: #1a7a3e !important;
+                color: #fff !important;
+            }
+
+            .menu-table tr {
+                break-inside: avoid;
+                page-break-inside: avoid;
+            }
+
+            .menu-table .counter-cell {
+                background: #f1f6f2;
+                color: #1a7a3e;
+            }
+
+            .menu-table .item-name {
+                color: #111;
             }
         }
     </style>
 </head>
 <body>
     <div class="toolbar">
-        <button class="btn btn-primary" type="button" id="downloadPdf">Download PDF</button>
-        <a class="btn btn-secondary" href="menuv1.php">Back to Menu</a>
+        <button class="btn btn-primary" type="button" id="downloadPdf"<?= empty($rows) || !empty($errorMessage) ? ' disabled' : '' ?>>Download PDF</button>
+        <a class="btn btn-secondary" href="full_menu">Back to Menu</a>
     </div>
+    <p class="pdf-status" id="pdfStatus" role="status" hidden></p>
 
     <div class="sheet" id="menuSheet">
         <div class="header">
@@ -277,71 +349,78 @@ foreach ($menuItems as $item) {
     </div>
 
     <script>
-        document.getElementById('downloadPdf').addEventListener('click', function () {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF('l', 'pt', 'a4');
-            const tableEl = document.getElementById('menuTable');
+        (function () {
+            var downloadButton = document.getElementById('downloadPdf');
+            var table = document.getElementById('menuTable');
+            var status = document.getElementById('pdfStatus');
 
-            if (!tableEl) {
-                return;
+            if (!downloadButton || !table) return;
+
+            function printAsPdf() {
+                status.textContent = 'Direct download is unavailable. In the print dialog, choose “Save as PDF”.';
+                status.hidden = false;
+                window.print();
             }
 
-            const title = 'KABC Hotel Menu';
-            const generated = new Date().toLocaleString();
-            const totalPagesExp = '{total_pages_count_string}';
+            downloadButton.addEventListener('click', function () {
+                var jsPDF = window.jspdf && window.jspdf.jsPDF;
+                if (typeof jsPDF !== 'function') {
+                    printAsPdf();
+                    return;
+                }
 
-            doc.autoTable({
-                html: tableEl,
-                startY: 80,
-                theme: 'grid',
-                headStyles: {
-                    fillColor: [26, 122, 62],
-                    textColor: [255, 255, 255],
-                    fontStyle: 'bold',
-                    halign: 'center'
-                },
-                bodyStyles: {
-                    fontSize: 10,
-                    cellPadding: 9,
-                    valign: 'top'
-                },
-                styles: {
-                    overflow: 'linebreak'
-                },
-                didDrawPage: function (data) {
-                    const pageWidth = doc.internal.pageSize.getWidth();
-                    const pageHeight = doc.internal.pageSize.getHeight();
-                    doc.setFontSize(18);
-                    doc.setTextColor(46, 204, 113);
-                    doc.text(title, pageWidth / 2, 36, { align: 'center' });
-
-                    if (data.pageNumber === 1) {
-                        doc.setFontSize(9);
-                        doc.setTextColor(120);
-                        doc.text('Generated: ' + generated, pageWidth - 20, 54, { align: 'right' });
+                try {
+                    var doc = new jsPDF('l', 'pt', 'a4');
+                    if (typeof doc.autoTable !== 'function') {
+                        printAsPdf();
+                        return;
                     }
 
-                    doc.setDrawColor(46, 204, 113);
-                    doc.setLineWidth(0.5);
-                    doc.line(data.settings.margin.left, 64, pageWidth - data.settings.margin.right, 64);
+                    var title = 'KABC Hotel Menu';
+                    var generated = new Date().toLocaleString();
+                    var totalPagesExp = '{total_pages_count_string}';
 
-                    doc.setFontSize(9);
-                    doc.setTextColor(120);
-                    doc.text(
-                        'Page ' + data.pageNumber + ' of ' + totalPagesExp,
-                        pageWidth - 20,
-                        pageHeight - 18,
-                        { align: 'right' }
-                    );
+                    doc.autoTable({
+                        html: table,
+                        startY: 80,
+                        theme: 'grid',
+                        headStyles: {
+                            fillColor: [26, 122, 62],
+                            textColor: [255, 255, 255],
+                            fontStyle: 'bold',
+                            halign: 'center'
+                        },
+                        bodyStyles: { fontSize: 10, cellPadding: 9, valign: 'top' },
+                        styles: { overflow: 'linebreak' },
+                        didDrawPage: function (data) {
+                            var pageWidth = doc.internal.pageSize.getWidth();
+                            var pageHeight = doc.internal.pageSize.getHeight();
+                            doc.setFontSize(18);
+                            doc.setTextColor(46, 122, 75);
+                            doc.text(title, pageWidth / 2, 36, { align: 'center' });
+
+                            if (data.pageNumber === 1) {
+                                doc.setFontSize(9);
+                                doc.setTextColor(120);
+                                doc.text('Generated: ' + generated, pageWidth - 20, 54, { align: 'right' });
+                            }
+
+                            doc.setDrawColor(46, 122, 75);
+                            doc.setLineWidth(0.5);
+                            doc.line(data.settings.margin.left, 64, pageWidth - data.settings.margin.right, 64);
+                            doc.setFontSize(9);
+                            doc.setTextColor(120);
+                            doc.text('Page ' + data.pageNumber + ' of ' + totalPagesExp, pageWidth - 20, pageHeight - 18, { align: 'right' });
+                        }
+                    });
+
+                    if (typeof doc.putTotalPages === 'function') doc.putTotalPages(totalPagesExp);
+                    doc.save('kabc-menu.pdf');
+                } catch (error) {
+                    printAsPdf();
                 }
             });
-
-            if (typeof doc.putTotalPages === 'function') {
-                doc.putTotalPages(totalPagesExp);
-            }
-
-            doc.save('kabc-menu-table.pdf');
-        }); 
+        })();
     </script>
 </body>
 </html>

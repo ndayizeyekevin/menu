@@ -19,7 +19,8 @@
             var isDark = root.dataset.theme === 'dark';
             toggle.setAttribute('aria-pressed', String(isDark));
             label.textContent = isDark ? 'Light theme' : 'Dark theme';
-            icon.textContent = isDark ? '☀' : '☾';
+            icon.classList.toggle('fa-sun', isDark);
+            icon.classList.toggle('fa-moon', !isDark);
         }
 
         toggle.addEventListener('click', function () {

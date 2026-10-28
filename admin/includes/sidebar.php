@@ -11,20 +11,20 @@
             aria-expanded="false"
             aria-controls="adminSidebarPanel"
         >
-            <span class="sidebar-toggle-icon" aria-hidden="true">☰</span>
+            <i class="fa-solid fa-bars sidebar-toggle-icon" aria-hidden="true"></i>
         </button>
     </div>
     <div class="admin-sidebar-panel" id="adminSidebarPanel">
         <p class="sidebar-section-label">Workspace</p>
         <nav aria-label="Admin navigation">
-            <a href="dashboard.php"<?= basename($_SERVER['SCRIPT_NAME']) === 'dashboard.php' ? ' class="active"' : '' ?>><span class="nav-icon" aria-hidden="true">▦</span>Dashboard</a>
-            <a href="menu.php"<?= in_array(basename($_SERVER['SCRIPT_NAME']), ['menu.php', 'menu_edit.php'], true) ? ' class="active"' : '' ?>><span class="nav-icon" aria-hidden="true">☷</span>Menu management</a>
-            <a href="menu_image_upload.php"<?= basename($_SERVER['SCRIPT_NAME']) === 'menu_image_upload.php' ? ' class="active"' : '' ?>><span class="nav-icon" aria-hidden="true">▧</span>Upload images</a>
-            <a href="login_logs.php"<?= basename($_SERVER['SCRIPT_NAME']) === 'login_logs.php' ? ' class="active"' : '' ?>><span class="nav-icon" aria-hidden="true">◷</span>Login activity</a>
+            <a href="dashboard.php"<?= basename($_SERVER['SCRIPT_NAME']) === 'dashboard.php' ? ' class="active"' : '' ?>><i class="fa-solid fa-gauge nav-icon" aria-hidden="true"></i>Dashboard</a>
+            <a href="menu.php"<?= in_array(basename($_SERVER['SCRIPT_NAME']), ['menu.php', 'menu_edit.php'], true) ? ' class="active"' : '' ?>><i class="fa-solid fa-utensils nav-icon" aria-hidden="true"></i>Menu management</a>
+            <a href="menu_image_upload.php"<?= basename($_SERVER['SCRIPT_NAME']) === 'menu_image_upload.php' ? ' class="active"' : '' ?>><i class="fa-solid fa-image nav-icon" aria-hidden="true"></i>Upload images</a>
+            <a href="login_logs.php"<?= basename($_SERVER['SCRIPT_NAME']) === 'login_logs.php' ? ' class="active"' : '' ?>><i class="fa-solid fa-clock-rotate-left nav-icon" aria-hidden="true"></i>Login activity</a>
         </nav>
         <div class="admin-sidebar-footer">
-            <a class="sidebar-public-link" href="../full_menu"><span aria-hidden="true">↗</span>View public site</a>
+            <a class="sidebar-public-link" href="../full_menu"><i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>View public site</a>
         </div>
     </div>
 </aside>
-<script src="../assets/js/admin_sidebar.js?v=3"></script>
+<script src="../assets/js/admin_sidebar.js?v=4"></script>

@@ -1,4 +1,33 @@
 (function () {
+    var themeKey = 'kabc-menu-theme';
+    var root = document.documentElement;
+    var themeToggle = document.querySelector('[data-theme-toggle]');
+
+    function updateThemeToggle() {
+        if (!themeToggle) return;
+
+        var isDark = root.dataset.theme !== 'light';
+        var label = themeToggle.querySelector('.theme-toggle-label');
+        var icon = themeToggle.querySelector('.theme-toggle-icon');
+        themeToggle.setAttribute('aria-pressed', String(isDark));
+        themeToggle.setAttribute('aria-label', 'Switch to ' + (isDark ? 'light' : 'dark') + ' theme');
+
+        if (label) label.textContent = isDark ? 'Light theme' : 'Dark theme';
+        if (icon) {
+            icon.classList.toggle('fa-sun', isDark);
+            icon.classList.toggle('fa-moon', !isDark);
+        }
+    }
+
+    updateThemeToggle();
+    if (themeToggle) {
+        themeToggle.addEventListener('click', function () {
+            root.dataset.theme = root.dataset.theme === 'dark' ? 'light' : 'dark';
+            localStorage.setItem(themeKey, root.dataset.theme);
+            updateThemeToggle();
+        });
+    }
+
     var searchInput = document.getElementById('menuSearch');
     var columns = document.querySelector('.menu-columns');
     var categoryBlocks = document.querySelectorAll('.category-block');
