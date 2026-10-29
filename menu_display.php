@@ -35,7 +35,7 @@ foreach ($menuItems as $item) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/png" href="../im">
+    <link rel="icon" type="image/png" href="./assets/images/icon.png">
     <title>Menu Board</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -488,7 +488,7 @@ foreach ($menuItems as $item) {
 <body>
     <!-- Hero Section -->
     <header class="hero">
-        <img src="./img/icon.png" alt="KABC Logo" width="200" style="margin-bottom: 20px;">
+        <img src="./assets/images/icon.png" alt="KABC Logo" width="200" style="margin-bottom: 20px;">
         <div class="hero-content">
             <div class="hero-badge">
                 <span class="dot"></span>
