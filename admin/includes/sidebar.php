@@ -1,7 +1,7 @@
 <aside class="admin-sidebar">
     <div class="admin-sidebar-head">
         <a class="admin-brand" href="dashboard.php" aria-label="KABC Hotel admin home">
-            <img src="../img/icon.png" alt="">
+            <img src="../assets/images/icon.png" alt="">
             <span class="admin-brand-copy">KABC Hotel <strong>ADMIN</strong></span>
         </a>
         <button
