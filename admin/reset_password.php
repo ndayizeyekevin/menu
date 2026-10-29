@@ -99,7 +99,7 @@ if ($validToken && $errorMessage === '') {
     <title>Reset password | KABC Hotel</title>
     <script src="../assets/js/admin_theme.js?v=2"></script>
     <link rel="stylesheet" href="../assets/css/admin.css?v=11">
-    <link rel="icon" type="image/png" href="../img/icon.png">
+    <link rel="icon" type="image/png" href="../assets/images/icon.png">
 </head>
 <body class="login-page">
     <button class="theme-toggle login-theme-toggle" type="button" data-theme-toggle aria-label="Toggle color theme" aria-pressed="false">
@@ -108,7 +108,7 @@ if ($validToken && $errorMessage === '') {
     </button>
     <main class="login-card">
         <a class="login-brand" href="../full_menu" aria-label="KABC Hotel public menu">
-            <img src="../img/icon.png" alt="KABC Hotel">
+            <img src="../assets/images/icon.png" alt="KABC Hotel">
         </a>
         <p class="eyebrow">KABC HOTEL ADMIN</p>
         <h1>Reset your password</h1>
