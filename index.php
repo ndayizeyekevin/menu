@@ -11,7 +11,7 @@ $landingCsrfToken = adminCsrfToken();
     <meta name="description" content="Discover the KABC Hotel menu. Good food, warm company, and a table ready for you.">
     <meta name="theme-color" content="#102c24">
     <title>KABC Hotel | Gather well. Eat joyfully.</title>
-    <link rel="icon" type="image/png" href="img/icon.png">
+    <link rel="icon" type="image/png" href="./assets/images/icon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
@@ -20,7 +20,7 @@ $landingCsrfToken = adminCsrfToken();
 <body>
     <header class="site-header">
         <a class="site-brand" href="./" aria-label="KABC Hotel home">
-            <img src="img/icon.png" alt="">
+            <img src="assets/images/icon.png" alt="">
             <span>KABC <strong>HOTEL</strong></span>
         </a>
         <nav class="site-nav" aria-label="Main navigation">
