@@ -42,7 +42,7 @@ $basePath = $basePath === '' ? '' : $basePath;
     <title><?= $statusCode ?> | KABC Hotel</title>
     <link rel="stylesheet" href="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/assets/fontawesome/css/fontawesome.min.css">
     <link rel="stylesheet" href="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/assets/fontawesome/css/solid.min.css">
-    <link rel="icon" type="image/png" href="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/img/icon.png">
+    <link rel="icon" type="image/png" href="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/assets/images/icon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
@@ -77,7 +77,7 @@ $basePath = $basePath === '' ? '' : $basePath;
     <main>
         <span class="code" aria-hidden="true"><?= $statusCode ?></span>
         <a class="brand" href="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/" aria-label="KABC Hotel home">
-            <img src="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/img/icon.png" alt="">
+            <img src="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/assets/images/icon.png" alt="">
             <span>KABC <strong>HOTEL</strong></span>
         </a>
         <p class="eyebrow"><?= htmlspecialchars($page['eyebrow'], ENT_QUOTES, 'UTF-8') ?></p>
