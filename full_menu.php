@@ -100,7 +100,7 @@ function renderMenuColumn(array $categories): void
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/png" href="./img/icon.png">
+    <link rel="icon" type="image/png" href="./assets/images/icon.png">
     <title>KABC Hotel Menu</title>
     <script>
         document.documentElement.dataset.theme = localStorage.getItem('kabc-menu-theme') === 'light' ? 'light' : 'dark';
@@ -119,7 +119,7 @@ function renderMenuColumn(array $categories): void
                 <i class="fa-solid fa-sun theme-toggle-icon" aria-hidden="true"></i>
                 <span class="theme-toggle-label">Light theme</span>
             </button>
-            <img src="./img/icon.png" alt="Menu icon">
+            <img src="./assets/images/icon.png" alt="Menu icon">
             <h1>OUR MENU</h1>
             <p class="header-sub">Fresh dishes & drinks from our kitchen</p>
             <div class="header-line"></div>
