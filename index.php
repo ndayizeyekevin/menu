@@ -46,15 +46,22 @@ $gallery = [
             <div class="hero-shade" aria-hidden="true"></div>
             <div class="hero-content">
                 <p class="eyebrow"><span></span> KIGALI CITY · RWANDA</p>
-                <h1 id="hero-title">A warm welcome.<br><em>A stay to remember.</em></h1>
-                <p class="hero-copy">Thoughtful hospitality, comfortable rooms and the feeling of being right where you need to be.</p>
+                <h1 id="hero-title">Make Kigali<br><em>feel like yours.</em></h1>
+                <p class="hero-copy">Settle into a comfortable room, enjoy breakfast on us, and explore the city from KABC Hotel.</p>
                 <div class="hero-actions">
                     <a class="button button-primary" href="mailto:reservations@kabchotel.rw?subject=Room%20reservation">Enquire about a stay <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
                     <a class="text-link" href="#stay">Discover KABC <i class="fa-solid fa-arrow-down" aria-hidden="true"></i></a>
                 </div>
-                <div class="hero-note"><span class="note-rule"></span><span>Breakfast included with every room</span></div>
+                <div class="hero-note"><span class="note-rule"></span><span>A comfortable base in the heart of Kigali</span></div>
             </div>
             <div class="hero-index" aria-hidden="true"><span>01</span> / YOUR KIGALI STAY</div>
+        </section>
+
+        <section class="quick-facts" aria-label="KABC Hotel at a glance">
+            <div><span class="fact-label">FIND US</span><strong>Kigali City, Rwanda</strong><a href="https://maps.google.com/?q=Kigali+City+6+KN+84+st" target="_blank" rel="noopener noreferrer">6 KN 84 st <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a></div>
+            <div><span class="fact-label">ROOMS FROM</span><strong>$60 <small>/ night</small></strong><a href="#stay">See rooms & rates <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a></div>
+            <div><span class="fact-label">INCLUDED WITH EVERY ROOM</span><strong>Breakfast & Wi-Fi</strong><span class="fact-note">Plus air conditioning and room service</span></div>
+            <div><span class="fact-label">SPEAK TO OUR TEAM</span><strong>+250 794 095 885</strong><a href="tel:+250794095885">Call KABC Hotel <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a></div>
         </section>
 
         <section class="experience" id="experience" aria-labelledby="experience-title">
