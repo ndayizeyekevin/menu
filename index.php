@@ -115,7 +115,6 @@ $gallery = [
             </div>
             <div class="hero-shade" aria-hidden="true"></div>
             <div class="hero-photo-caption" aria-hidden="true"><span>KIGALI CITY · RWANDA</span><strong>A place to settle in</strong></div>
-            <button class="hero-motion-toggle" type="button" data-hero-toggle aria-label="Pause hero slideshow" aria-pressed="false"><i class="fa-solid fa-pause" aria-hidden="true"></i><span class="visually-hidden">Pause hero slideshow</span></button>
             <div class="hero-content">
                 <p class="eyebrow"><span></span> KIGALI CITY · RWANDA</p>
                 <h1 id="hero-title">Make Kigali<br><em>feel like yours.</em></h1>
@@ -226,7 +225,7 @@ $gallery = [
 
     <?php require __DIR__ . '/includes/footer.php'; ?>
     <script src="assets/js/landing.js" defer></script>
-    <script src="assets/js/hero_slideshow.js?v=1" defer></script>
+    <script src="assets/js/hero_slideshow.js?v=2" defer></script>
     <script src="assets/js/password_visibility.js?v=1" defer></script>
 </body>
 </html>
