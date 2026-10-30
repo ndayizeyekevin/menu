@@ -51,14 +51,14 @@
 .rates-note{font-size:.84rem;line-height:1.65}
 @media(max-width:1000px){.room-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.room-image{height:230px}}
 @media(max-width:650px){.room-grid{grid-template-columns:1fr;gap:17px}.room-image{height:235px}.room-info{padding:22px}.room-info h3{font-size:1.2rem}.room-info>p{margin:9px 0 19px;font-size:.95rem}.room-rates{margin-top:0}.room-rates span{padding:10px 0}.room-link{margin-top:16px}}
-.room-info{flex:1;background:#e8ede2;color:var(--ink)}
-.room-info h3{color:var(--forest)}
-.room-info>p{color:#58635a}
+.room-info{flex:1;background:#e8ede2;color:#444d46}
+.room-info h3{color:#173b2c}
+.room-info>p{color:#4f5951}
 .room-rates{border-color:rgba(24,38,30,.16)}
-.room-rates span{border-color:rgba(24,38,30,.12);color:#5d675f}
-.room-rates strong{color:var(--forest)}
-.room-rates small{color:#6d776e}
-.room-link{color:var(--forest-mid)}
+.room-rates span{border-color:rgba(24,38,30,.12);color:#535d55}
+.room-rates strong{color:#173b2c}
+.room-rates small{color:#606a62}
+.room-link{color:#173b2c}
 .room-link:hover{color:#718666}
 .room-grid{grid-auto-rows:1fr;align-items:stretch}
 .room-card{height:100%}
