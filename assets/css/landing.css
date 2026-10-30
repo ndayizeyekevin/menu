@@ -63,6 +63,44 @@
 .room-grid{grid-auto-rows:1fr;align-items:stretch}
 .room-card{height:100%}
 
+/* Reservations form and hotel map. */
+.contact-section{display:grid;grid-template-columns:minmax(210px,.72fr) minmax(0,1.8fr);align-items:start;gap:clamp(28px,4vw,62px);padding:clamp(70px,8vw,108px) clamp(24px,8.5vw,124px);background:#f0f1e9;color:var(--ink)}
+.contact-heading{padding-top:10px}
+.contact-heading h2{color:var(--ink);font-size:clamp(2.5rem,4.1vw,4rem);line-height:1.06}
+.contact-heading h2 em{color:#68805e}
+.contact-heading>p:not(.eyebrow){max-width:340px;margin:17px 0 27px;color:#59635a;font-size:.92rem;line-height:1.75}
+.contact-direct-link{display:flex;align-items:center;gap:10px;margin-top:12px;color:#294635;font-size:.83rem;font-weight:600;text-decoration:none}
+.contact-direct-link .fa-solid{width:17px;color:#788b68;font-size:.8rem;text-align:center}
+.contact-direct-link:hover{color:#718666}
+.contact-grid{display:grid;grid-template-columns:minmax(0,1.12fr) minmax(250px,.88fr);gap:17px;align-items:stretch}
+.enquiry-panel{padding:clamp(20px,2.4vw,32px);background:#fff;box-shadow:0 14px 36px rgba(24,38,30,.07)}
+.contact-form{position:relative;display:grid;gap:14px}
+.contact-honey{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
+.form-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+.form-field{display:grid;min-width:0;gap:6px}
+.form-field label{color:#35453a;font-size:.76rem;font-weight:700}
+.form-field label>span:not(.optional-label){color:#a55b43}
+.optional-label{margin-left:5px;color:#899087;font-size:.68rem;font-weight:400}
+.form-field input,.form-field select,.form-field textarea{width:100%;min-height:43px;padding:10px 11px;border:1px solid #d6ddd4;border-radius:3px;background:#fbfcf9;color:#243329;font:inherit;font-size:.8rem}
+.form-field textarea{min-height:78px;resize:vertical;line-height:1.5}
+.form-field input:focus,.form-field select:focus,.form-field textarea:focus{border-color:#718666;outline:3px solid rgba(113,134,102,.16)}
+.contact-form-hint{margin:-8px 0 0;color:#717b72;font-size:.68rem}
+.contact-submit{justify-self:start;min-height:46px;margin-top:1px;padding:0 17px;font-size:.8rem}
+.form-feedback{display:flex;align-items:flex-start;gap:9px;margin-bottom:17px;padding:12px 14px;border:1px solid;font-size:.78rem;line-height:1.5}
+.form-feedback-success{border-color:#b8cdb0;background:#eff5eb;color:#294635}
+.form-feedback-error{border-color:#e0bdb4;background:#fff3ef;color:#773d31}
+.map-panel{display:flex;min-height:100%;flex-direction:column;overflow:hidden;background:#fff;box-shadow:0 14px 36px rgba(24,38,30,.07)}
+.map-panel iframe{display:block;width:100%;min-height:300px;flex:1;border:0;background:#e6e9e2}
+.map-details{display:flex;align-items:center;gap:12px;padding:15px 16px}
+.map-pin{display:grid;width:35px;height:35px;flex:0 0 auto;place-items:center;border-radius:50%;background:#edf1e8;color:#58734e}
+.map-details>div{display:grid;gap:4px;min-width:0}
+.map-details strong{color:#26392d;font-size:.8rem}
+.map-details>div>span{color:#687269;font-size:.7rem;line-height:1.4}
+.map-details>a{display:grid;width:32px;height:32px;flex:0 0 auto;place-items:center;margin-left:auto;border:1px solid #dce2d9;border-radius:50%;color:#425b45;font-size:.72rem;text-decoration:none}
+.map-details>a:hover{background:#edf1e8}
+@media(max-width:1000px){.contact-section{grid-template-columns:1fr;gap:26px}.contact-heading h2{font-size:clamp(2.5rem,6vw,4rem)}.contact-heading>p:not(.eyebrow){max-width:560px}.contact-grid{grid-template-columns:minmax(0,1.1fr) minmax(280px,.9fr)}}
+@media(max-width:650px){.contact-section{gap:24px;padding:64px 20px}.contact-grid{grid-template-columns:1fr}.enquiry-panel{padding:20px 17px}.form-row{grid-template-columns:1fr;gap:13px}.form-field input,.form-field select,.form-field textarea{min-height:46px;font-size:.87rem}.form-field textarea{min-height:94px}.contact-form-hint{margin:-8px 0 0}.map-panel iframe{min-height:260px;height:260px;flex:initial}}
+
 /* Give the hero image an intentional frame and make the gallery feel editorial. */
 .hero-photo{top:28px;left:42%;width:calc(58% - 34px);height:calc(100% - 56px);border:1px solid rgba(255,255,255,.2);box-shadow:0 28px 70px rgba(0,0,0,.22);object-position:center 48%}
 .hero-shade{background:linear-gradient(90deg,var(--forest-dark) 0%,var(--forest-dark) 37%,rgba(17,29,23,.93) 45%,rgba(17,29,23,.28) 68%,rgba(17,29,23,.08) 100%),linear-gradient(0deg,rgba(10,19,14,.4),transparent 42%)}

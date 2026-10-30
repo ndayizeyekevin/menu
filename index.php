@@ -10,6 +10,71 @@ $rooms = [
     ['Two Bedrooms in One', 'A spacious room with a separate smaller bedroom, suitable for up to three guests.', 'room-family-compact.webp', [['1 guest', '$70'], ['2 guests', '$90']]],
     ['Family Room', 'Two standard rooms connected together, giving everyone more room to settle in.', 'room-family.webp', [['Per night', '$110']]],
 ];
+$contactFormValues = ['name' => '', 'email' => '', 'phone' => '', 'room' => '', 'arrival' => '', 'departure' => '', 'message' => ''];
+$contactFormError = '';
+$contactFormSent = isset($_GET['contact']) && $_GET['contact'] === 'sent';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['form_action'] ?? '') === 'contact_enquiry') {
+    $readContactField = static function (string $key): string {
+        return isset($_POST[$key]) && is_string($_POST[$key]) ? trim($_POST[$key]) : '';
+    };
+    foreach ($contactFormValues as $key => $_value) {
+        $contactFormValues[$key] = $readContactField($key);
+    }
+
+    if (!adminVerifyCsrfToken($_POST['csrf_token'] ?? null)) {
+        $contactFormError = 'Your form session expired. Please refresh the page and try again.';
+    } elseif ($readContactField('website') !== '') {
+        header('Location: ./?contact=sent#contact');
+        exit;
+    } elseif (isset($_SESSION['last_contact_enquiry']) && time() - (int) $_SESSION['last_contact_enquiry'] < 30) {
+        $contactFormError = 'Please wait a moment before sending another enquiry.';
+    } elseif ($contactFormValues['name'] === '' || mb_strlen($contactFormValues['name']) > 120) {
+        $contactFormError = 'Please enter your name (up to 120 characters).';
+    } elseif ($contactFormValues['email'] !== '' && filter_var($contactFormValues['email'], FILTER_VALIDATE_EMAIL) === false) {
+        $contactFormError = 'Please enter a valid email address.';
+    } elseif (mb_strlen($contactFormValues['email']) > 254 || mb_strlen($contactFormValues['phone']) > 40) {
+        $contactFormError = 'Please check your email or phone number and try again.';
+    } elseif ($contactFormValues['email'] === '' && $contactFormValues['phone'] === '') {
+        $contactFormError = 'Please provide an email address or phone number so reservations can reach you.';
+    } elseif ($contactFormValues['room'] !== '' && !in_array($contactFormValues['room'], array_column($rooms, 0), true)) {
+        $contactFormError = 'Please choose a room from the list.';
+    } elseif (mb_strlen($contactFormValues['message']) > 2000) {
+        $contactFormError = 'Please keep your message under 2,000 characters.';
+    } else {
+        $parseContactDate = static function (string $value) {
+            if ($value === '') {
+                return null;
+            }
+            $date = DateTimeImmutable::createFromFormat('!Y-m-d', $value);
+            $errors = DateTimeImmutable::getLastErrors();
+            return $date && ($errors === false || (!$errors['warning_count'] && !$errors['error_count'])) ? $date : false;
+        };
+        $arrivalDate = $parseContactDate($contactFormValues['arrival']);
+        $departureDate = $parseContactDate($contactFormValues['departure']);
+        $invalidArrival = $contactFormValues['arrival'] !== '' && $arrivalDate === false;
+        $invalidDeparture = $contactFormValues['departure'] !== '' && $departureDate === false;
+
+        if ($invalidArrival || $invalidDeparture) {
+            $contactFormError = 'Please enter valid arrival and departure dates.';
+        } elseif (($arrivalDate && $arrivalDate < new DateTimeImmutable('today')) || ($departureDate && $departureDate < new DateTimeImmutable('today'))) {
+            $contactFormError = 'Please choose dates that are today or later.';
+        } elseif ($arrivalDate && $departureDate && $departureDate <= $arrivalDate) {
+            $contactFormError = 'Departure must be after arrival.';
+        } else {
+            try {
+                require_once __DIR__ . '/includes/contact_enquiry_mailer.php';
+                sendKabcRoomEnquiry($contactFormValues);
+                $_SESSION['last_contact_enquiry'] = time();
+                header('Location: ./?contact=sent#contact');
+                exit;
+            } catch (Throwable $exception) {
+                error_log('KABC room enquiry could not be sent: ' . $exception->getMessage());
+                $contactFormError = 'We couldn’t send your enquiry just now. Please call +250 794 095 885 or email reservations@kabchotel.rw.';
+            }
+        }
+    }
+}
 $gallery = [
     ['Reception', 'gallery-reception.webp'], ['Rooms', 'gallery-rooms.webp'], ['Breakfast buffet', 'gallery-buffet.webp'],
     ['The hotel by day', 'gallery-daytime.webp'], ['Conference room', 'gallery-conference.webp'], ['Restaurant', 'gallery-restaurant.webp'],
@@ -107,7 +172,48 @@ $gallery = [
             <div class="gallery-grid"><?php foreach ($gallery as $index => $image): ?><figure class="gallery-item gallery-item-<?= $index + 1 ?>"><img src="assets/hotel/<?= htmlspecialchars($image[1], ENT_QUOTES, 'UTF-8') ?>" alt="<?= htmlspecialchars($image[0], ENT_QUOTES, 'UTF-8') ?> at KABC Hotel" loading="lazy"><figcaption><?= htmlspecialchars($image[0], ENT_QUOTES, 'UTF-8') ?></figcaption></figure><?php endforeach; ?></div>
         </section>
 
-        <section class="contact-section" id="contact" aria-labelledby="contact-title"><div><p class="eyebrow"><span></span> WE’D LOVE TO WELCOME YOU</p><h2 id="contact-title">Your Kigali stay<br>starts <em>here.</em></h2><p>Talk to our team about a room, a meal or anything that will make your visit more comfortable.</p></div><div class="contact-actions"><a class="button button-primary" href="mailto:reservations@kabchotel.rw?subject=Room%20reservation">Contact reservations <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a><a href="tel:+250794095885">Call +250 794 095 885</a><a href="https://maps.google.com/?q=Kigali+City+6+KN+84+st" target="_blank" rel="noopener noreferrer">Kigali City 6 KN 84 st <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a></div></section>
+        <section class="contact-section" id="contact" aria-labelledby="contact-title">
+            <div class="contact-heading">
+                <p class="eyebrow eyebrow-dark"><span></span> LET'S PLAN YOUR STAY</p>
+                <h2 id="contact-title">A room in Kigali<br>is just <em>a message away.</em></h2>
+                <p>Tell us a little about your visit. Our reservations team will follow up to confirm availability and rates.</p>
+                <a class="contact-direct-link" href="tel:+250794095885"><i class="fa-solid fa-phone" aria-hidden="true"></i> +250 794 095 885</a>
+                <a class="contact-direct-link" href="mailto:reservations@kabchotel.rw"><i class="fa-solid fa-envelope" aria-hidden="true"></i> reservations@kabchotel.rw</a>
+            </div>
+            <div class="contact-grid">
+                <div class="enquiry-panel">
+                    <?php if ($contactFormSent): ?>
+                        <div class="form-feedback form-feedback-success" role="status"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Thank you. Your enquiry has been sent to our reservations team.</div>
+                    <?php elseif ($contactFormError !== ''): ?>
+                        <div class="form-feedback form-feedback-error" role="alert"><?= htmlspecialchars($contactFormError, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></div>
+                    <?php endif; ?>
+                    <form class="contact-form" action="#contact" method="post">
+                        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($landingCsrfToken, ENT_QUOTES, 'UTF-8') ?>">
+                        <input type="hidden" name="form_action" value="contact_enquiry">
+                        <div class="contact-honey" aria-hidden="true"><label for="contactWebsite">Leave this field empty</label><input id="contactWebsite" type="text" name="website" tabindex="-1" autocomplete="off"></div>
+                        <div class="form-row">
+                            <div class="form-field"><label for="contactName">Your name <span>*</span></label><input id="contactName" name="name" type="text" maxlength="120" autocomplete="name" value="<?= htmlspecialchars($contactFormValues['name'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>" required></div>
+                            <div class="form-field"><label for="contactRoom">Room preference</label><select id="contactRoom" name="room"><option value="">Choose a room (optional)</option><?php foreach ($rooms as $room): ?><option value="<?= htmlspecialchars($room[0], ENT_QUOTES, 'UTF-8') ?>" <?= $contactFormValues['room'] === $room[0] ? 'selected' : '' ?>><?= htmlspecialchars($room[0], ENT_QUOTES, 'UTF-8') ?></option><?php endforeach; ?></select></div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-field"><label for="contactEmail">Email</label><input id="contactEmail" name="email" type="email" maxlength="254" autocomplete="email" value="<?= htmlspecialchars($contactFormValues['email'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>" placeholder="you@example.com"></div>
+                            <div class="form-field"><label for="contactPhone">Phone</label><input id="contactPhone" name="phone" type="tel" maxlength="40" autocomplete="tel" value="<?= htmlspecialchars($contactFormValues['phone'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>" placeholder="+250 ..."></div>
+                        </div>
+                        <p class="contact-form-hint">Please provide an email address or phone number.</p>
+                        <div class="form-row">
+                            <div class="form-field"><label for="contactArrival">Arrival</label><input id="contactArrival" name="arrival" type="date" value="<?= htmlspecialchars($contactFormValues['arrival'], ENT_QUOTES, 'UTF-8') ?>"></div>
+                            <div class="form-field"><label for="contactDeparture">Departure</label><input id="contactDeparture" name="departure" type="date" value="<?= htmlspecialchars($contactFormValues['departure'], ENT_QUOTES, 'UTF-8') ?>"></div>
+                        </div>
+                        <div class="form-field"><label for="contactMessage">Message <span class="optional-label">Optional</span></label><textarea id="contactMessage" name="message" rows="3" maxlength="2000" placeholder="Anything else we should know?"><?= htmlspecialchars($contactFormValues['message'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></textarea></div>
+                        <button class="button button-primary contact-submit" type="submit">Send enquiry <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button>
+                    </form>
+                </div>
+                <aside class="map-panel" aria-label="KABC Hotel location">
+                    <iframe title="Map showing KABC Hotel in Kigali" src="https://maps.google.com/maps?q=Kigali%20City%206%20KN%2084%20st&t=&z=15&ie=UTF8&iwloc=&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
+                    <div class="map-details"><span class="map-pin"><i class="fa-solid fa-location-dot" aria-hidden="true"></i></span><div><strong>KABC Hotel</strong><span>Kigali City 6 KN 84 st, Rwanda</span></div><a href="https://maps.google.com/?q=Kigali+City+6+KN+84+st" target="_blank" rel="noopener noreferrer" aria-label="Open KABC Hotel in Google Maps"><i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a></div>
+                </aside>
+            </div>
+        </section>
     </main>
 
     <dialog class="login-dialog" id="adminLoginDialog" aria-labelledby="loginDialogTitle"><div class="login-dialog-content"><button class="login-dialog-close" type="button" data-login-close aria-label="Close sign-in dialog">&times;</button><p class="eyebrow eyebrow-dark"><span></span> KABC HOTEL ADMIN</p><h2 id="loginDialogTitle">Welcome back.</h2><p class="login-dialog-copy">Sign in to manage menu items and images.</p><form class="landing-login-form" action="admin/" method="post"><input type="hidden" name="csrf_token" value="<?= htmlspecialchars($landingCsrfToken, ENT_QUOTES, 'UTF-8') ?>"><input type="hidden" name="action" value="login"><label for="landingUsername">Username</label><input id="landingUsername" name="username" type="text" minlength="3" maxlength="64" placeholder="Enter username" autocomplete="username" required><label for="landingPassword">Password</label><input id="landingPassword" name="password" type="password" placeholder="Enter password" autocomplete="current-password" required><button class="button button-primary" type="submit">Sign in <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button></form><a class="login-recovery-link" href="admin/">Forgot your password?</a></div></dialog>
