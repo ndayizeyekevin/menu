@@ -27,7 +27,7 @@
         </div>
     </div>
     <div class="footer-bottom">
-        <p>Copyright &copy; <?= date('Y') ?> KABC Hotel. All rights reserved.</p>
+        <p>Copyright &copy; 2025 - <?= date('Y') ?> KABC Hotel. All rights reserved.</p>
         <small>Powered by <a href="https://nusk.rw" target="_blank" rel="noopener noreferrer">NUSK Tech Solutions Group</a></small>
     </div>
 </footer>
