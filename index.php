@@ -44,6 +44,7 @@ $gallery = [
         <section class="hero" aria-labelledby="hero-title">
             <img class="hero-photo" src="assets/hotel/gallery-daytime.webp" alt="KABC Hotel in Kigali" fetchpriority="high">
             <div class="hero-shade" aria-hidden="true"></div>
+            <div class="hero-photo-caption" aria-hidden="true"><span>KIGALI CITY · RWANDA</span><strong>A place to settle in</strong></div>
             <div class="hero-content">
                 <p class="eyebrow"><span></span> KIGALI CITY · RWANDA</p>
                 <h1 id="hero-title">Make Kigali<br><em>feel like yours.</em></h1>

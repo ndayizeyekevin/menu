@@ -62,3 +62,17 @@
 .room-link:hover{color:#718666}
 .room-grid{grid-auto-rows:1fr;align-items:stretch}
 .room-card{height:100%}
+
+/* Give the hero image an intentional frame and make the gallery feel editorial. */
+.hero-photo{top:28px;left:42%;width:calc(58% - 34px);height:calc(100% - 56px);border:1px solid rgba(255,255,255,.2);box-shadow:0 28px 70px rgba(0,0,0,.22);object-position:center 48%}
+.hero-shade{background:linear-gradient(90deg,var(--forest-dark) 0%,var(--forest-dark) 37%,rgba(17,29,23,.93) 45%,rgba(17,29,23,.28) 68%,rgba(17,29,23,.08) 100%),linear-gradient(0deg,rgba(10,19,14,.4),transparent 42%)}
+.hero-photo-caption{position:absolute;z-index:2;right:clamp(42px,7vw,100px);bottom:65px;display:grid;gap:6px;padding:13px 17px;border-left:2px solid var(--gold);background:rgba(16,29,22,.78);backdrop-filter:blur(8px);color:#fff}
+.hero-photo-caption span{color:var(--sage);font-size:.58rem;font-weight:700;letter-spacing:.16em}
+.hero-photo-caption strong{font-family:"Playfair Display",Georgia,serif;font-size:1.02rem;font-weight:500}
+.gallery-grid{grid-auto-rows:clamp(155px,16vw,220px);gap:15px}
+.gallery-item{isolation:isolate;background:#e3e6df}
+.gallery-item img{filter:saturate(.92);transition:transform 500ms cubic-bezier(.2,.65,.25,1),filter 500ms ease}
+.gallery-item:hover img{filter:saturate(1.04)}
+.gallery-item::after{z-index:0;background:linear-gradient(180deg,transparent 48%,rgba(12,24,17,.7) 100%)}
+.gallery-item figcaption{bottom:16px;left:16px;padding:8px 11px;border:1px solid rgba(255,255,255,.2);background:rgba(16,29,22,.62);font-size:.72rem;letter-spacing:.025em;backdrop-filter:blur(5px)}
+@media(max-width:650px){.hero-photo{top:0;left:0;width:100%;height:100%;border:0;box-shadow:none;object-position:58% center}.hero-shade{background:linear-gradient(90deg,rgba(10,19,14,.82),rgba(10,19,14,.38)),linear-gradient(0deg,rgba(10,19,14,.58),transparent 55%)}.hero-photo-caption{display:none}.gallery-grid{grid-auto-rows:150px;gap:9px}.gallery-item figcaption{bottom:10px;left:10px;padding:7px 9px;font-size:.67rem}}
