@@ -64,14 +64,14 @@
 .room-card{height:100%}
 
 /* Reservations form and hotel map. */
-.contact-section{display:grid;grid-template-columns:minmax(210px,.72fr) minmax(0,1.8fr);align-items:start;gap:clamp(28px,4vw,62px);padding:clamp(70px,8vw,108px) clamp(24px,8.5vw,124px);background:#f0f1e9;color:var(--ink)}
+.contact-section{display:grid;grid-template-columns:minmax(210px,.72fr) minmax(0,1.8fr);align-items:start;gap:clamp(28px,4vw,62px);padding:clamp(70px,8vw,108px) clamp(24px,8.5vw,124px);background:var(--forest-dark);color:#fff}
 .contact-heading{padding-top:10px}
-.contact-heading h2{color:var(--ink);font-size:clamp(2.5rem,4.1vw,4rem);line-height:1.06}
+.contact-heading h2{color:#fff;font-size:clamp(2.5rem,4.1vw,4rem);line-height:1.06}
 .contact-heading h2 em{color:#68805e}
-.contact-heading>p:not(.eyebrow){max-width:340px;margin:17px 0 27px;color:#59635a;font-size:.92rem;line-height:1.75}
-.contact-direct-link{display:flex;align-items:center;gap:10px;margin-top:12px;color:#294635;font-size:.83rem;font-weight:600;text-decoration:none}
-.contact-direct-link .fa-solid{width:17px;color:#788b68;font-size:.8rem;text-align:center}
-.contact-direct-link:hover{color:#718666}
+.contact-heading>p:not(.eyebrow){max-width:340px;margin:17px 0 27px;color:rgba(255,255,255,.72);font-size:.92rem;line-height:1.75}
+.contact-direct-link{display:flex;align-items:center;gap:10px;margin-top:12px;color:rgba(255,255,255,.88);font-size:.83rem;font-weight:600;text-decoration:none}
+.contact-direct-link .fa-solid{width:17px;color:var(--sage);font-size:.8rem;text-align:center}
+.contact-direct-link:hover{color:var(--sage)}
 .contact-grid{display:grid;grid-template-columns:minmax(0,1.12fr) minmax(250px,.88fr);gap:17px;align-items:stretch}
 .enquiry-panel{padding:clamp(20px,2.4vw,32px);background:#fff;box-shadow:0 14px 36px rgba(24,38,30,.07)}
 .contact-form{position:relative;display:grid;gap:14px}
