@@ -136,3 +136,7 @@
     .site-header:not(.nav-ready) .site-nav{max-width:65%;flex-wrap:wrap;justify-content:flex-end;gap:5px 9px;font-size:.65rem}
     .site-header:not(.nav-ready) .site-nav>a:first-child,.site-header:not(.nav-ready) .site-nav>a:nth-child(3){display:inline}
 }
+.scroll-top-button{position:fixed;z-index:20;right:clamp(16px,3vw,32px);bottom:clamp(16px,3vw,32px);display:grid;width:48px;height:48px;place-items:center;border:1px solid rgba(24,38,30,.18);border-radius:50%;background:var(--sage);color:var(--forest-dark);box-shadow:0 6px 20px rgba(0,0,0,.2);font-size:1rem;cursor:pointer;transition:transform 160ms ease,background-color 160ms ease}
+.scroll-top-button[hidden]{display:none}
+.scroll-top-button:hover{transform:translateY(-3px);background:#d4e2c6}
+.scroll-top-button:focus-visible{outline:2px solid var(--forest-dark);outline-offset:3px}
