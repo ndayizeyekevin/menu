@@ -17,7 +17,7 @@
     function scheduleNext() {
         window.clearTimeout(timer);
         if (!reducedMotion.matches && document.visibilityState === 'visible') {
-            timer = window.setTimeout(showNext, 7000);
+            timer = window.setTimeout(showNext, 3000);
         }
     }
 
