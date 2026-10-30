@@ -109,7 +109,7 @@ function renderMenuColumn(array $categories): void
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="assets/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
-    <link href="assets/css/full_menu.css?v=5" rel="stylesheet">
+    <link href="assets/css/full_menu.css?v=6" rel="stylesheet">
 </head>
 <body>
     <header class="header">
@@ -169,5 +169,6 @@ function renderMenuColumn(array $categories): void
 
     <?php require __DIR__ . '/includes/footer.php'; ?>
     <script src="assets/js/full_menu.js?v=3" defer></script>
+    <script src="assets/js/scroll_to_top.js?v=1" defer></script>
 </body>
 </html>
