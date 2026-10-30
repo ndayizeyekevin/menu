@@ -93,7 +93,7 @@ $gallery = [
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/landing.css?v=6">
+    <link rel="stylesheet" href="assets/css/landing.css?v=7">
 </head>
 <body>
     <header class="site-header">
@@ -226,6 +226,7 @@ $gallery = [
 
     <?php require __DIR__ . '/includes/footer.php'; ?>
     <script src="assets/js/landing.js" defer></script>
+    <script src="assets/js/scroll_to_top.js?v=1" defer></script>
     <script src="assets/js/site_navigation.js?v=1" defer></script>
     <script src="assets/js/hero_slideshow.js?v=2" defer></script>
     <script src="assets/js/password_visibility.js?v=1" defer></script>
