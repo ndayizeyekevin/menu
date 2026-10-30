@@ -52,6 +52,7 @@
 @media(max-width:1000px){.room-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.room-image{height:230px}}
 @media(max-width:650px){.room-grid{grid-template-columns:1fr;gap:17px}.room-image{height:235px}.room-info{padding:22px}.room-info h3{font-size:1.2rem}.room-info>p{margin:9px 0 19px;font-size:.95rem}.room-rates{margin-top:0}.room-rates span{padding:10px 0}.room-link{margin-top:16px}}
 .room-info{background:var(--forest);color:#fff}
+.room-info{flex:1}
 .room-info h3{color:#fff}
 .room-info>p{color:rgba(255,255,255,.78)}
 .room-rates{border-color:rgba(255,255,255,.2)}
