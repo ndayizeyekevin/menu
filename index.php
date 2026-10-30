@@ -93,16 +93,17 @@ $gallery = [
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/landing.css?v=5">
+    <link rel="stylesheet" href="assets/css/landing.css?v=6">
 </head>
 <body>
     <header class="site-header">
         <a class="site-brand" href="#home" aria-label="KABC Hotel home"><img src="assets/images/icon.png" alt=""><span>KABC <strong>HOTEL</strong></span></a>
-        <nav class="site-nav" aria-label="Main navigation">
+        <nav class="site-nav" id="primaryNavigation" aria-label="Main navigation">
             <a href="#stay">Rooms</a><a href="#experience">The experience</a><a href="#gallery">Gallery</a>
             <a class="nav-menu-link" href="full_menu">Explore the menu <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a>
             <button class="nav-login-button" type="button" data-login-open>Admin sign in</button>
         </nav>
+        <button class="mobile-nav-toggle" type="button" aria-controls="primaryNavigation" aria-expanded="false" aria-label="Open navigation" data-nav-toggle hidden><i class="fa-solid fa-bars" aria-hidden="true"></i></button>
     </header>
 
     <main id="home">
@@ -225,6 +226,7 @@ $gallery = [
 
     <?php require __DIR__ . '/includes/footer.php'; ?>
     <script src="assets/js/landing.js" defer></script>
+    <script src="assets/js/site_navigation.js?v=1" defer></script>
     <script src="assets/js/hero_slideshow.js?v=2" defer></script>
     <script src="assets/js/password_visibility.js?v=1" defer></script>
 </body>
