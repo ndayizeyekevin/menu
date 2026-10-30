@@ -93,7 +93,7 @@ $gallery = [
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/landing.css?v=4">
+    <link rel="stylesheet" href="assets/css/landing.css?v=5">
 </head>
 <body>
     <header class="site-header">
@@ -107,9 +107,15 @@ $gallery = [
 
     <main id="home">
         <section class="hero" aria-labelledby="hero-title">
-            <img class="hero-photo" src="assets/hotel/gallery-daytime.webp" alt="KABC Hotel in Kigali" fetchpriority="high">
+            <div class="hero-slideshow" aria-hidden="true">
+                <img class="hero-photo is-active" src="assets/hotel/gallery-daytime.webp" alt="" fetchpriority="high">
+                <img class="hero-photo" src="assets/hotel/gallery-night.webp" alt="" loading="eager">
+                <img class="hero-photo" src="assets/hotel/gallery-reception.webp" alt="" loading="eager">
+                <img class="hero-photo" src="assets/hotel/gallery-restaurant.webp" alt="" loading="eager">
+            </div>
             <div class="hero-shade" aria-hidden="true"></div>
             <div class="hero-photo-caption" aria-hidden="true"><span>KIGALI CITY · RWANDA</span><strong>A place to settle in</strong></div>
+            <button class="hero-motion-toggle" type="button" data-hero-toggle aria-label="Pause hero slideshow" aria-pressed="false"><i class="fa-solid fa-pause" aria-hidden="true"></i><span class="visually-hidden">Pause hero slideshow</span></button>
             <div class="hero-content">
                 <p class="eyebrow"><span></span> KIGALI CITY · RWANDA</p>
                 <h1 id="hero-title">Make Kigali<br><em>feel like yours.</em></h1>
@@ -220,6 +226,7 @@ $gallery = [
 
     <?php require __DIR__ . '/includes/footer.php'; ?>
     <script src="assets/js/landing.js" defer></script>
+    <script src="assets/js/hero_slideshow.js?v=1" defer></script>
     <script src="assets/js/password_visibility.js?v=1" defer></script>
 </body>
 </html>
