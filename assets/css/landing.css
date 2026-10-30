@@ -120,7 +120,7 @@
 
 /* Keep the main navigation available as visitors move down the page. */
 .site-header{position:fixed;transition:background-color 180ms ease,box-shadow 180ms ease,backdrop-filter 180ms ease}
-.site-header.is-scrolled,.site-header.menu-open{background:rgba(17,29,23,.97);box-shadow:0 8px 24px rgba(0,0,0,.13);backdrop-filter:blur(12px)}
+.site-header.is-scrolled,.site-header.menu-open{background:rgba(17,29,23,.97);box-shadow:0 8px 24px rgba(255,255,255,.12);backdrop-filter:blur(12px)}
 .mobile-nav-toggle{display:none;width:42px;height:42px;place-items:center;border:1px solid rgba(255,255,255,.45);border-radius:3px;background:rgba(17,29,23,.25);color:#fff;font-size:1rem;cursor:pointer}
 .mobile-nav-toggle:focus-visible{outline:2px solid var(--sage);outline-offset:3px}
 .mobile-nav-toggle[hidden]{display:none}
