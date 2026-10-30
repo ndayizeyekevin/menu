@@ -31,3 +31,6 @@
         <small>Powered by <a href="https://nusk.rw" target="_blank" rel="noopener noreferrer">NUSK Tech Solutions Group</a></small>
     </div>
 </footer>
+<button class="scroll-top-button" type="button" aria-label="Scroll to top" title="Scroll to top" data-scroll-top hidden>
+    <i class="fa-solid fa-arrow-up" aria-hidden="true"></i>
+</button>
