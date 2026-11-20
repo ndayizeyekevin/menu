@@ -207,6 +207,7 @@ unset($_SESSION['admin_password_reset_notice']);
         <?php if (!$setupMode): ?>
             <a class="login-public-link" href="forgot_password.php">Forgot your password?</a>
         <?php endif; ?>
+        <br>
         <a class="login-public-link" href="../full_menu">View public menu</a>
     </main>
     <script src="../assets/js/password_visibility.js?v=1" defer></script>

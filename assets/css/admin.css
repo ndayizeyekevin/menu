@@ -369,6 +369,7 @@ a { color: var(--admin-green); }
 .login-card .muted { line-height: 1.6; }
 .login-card .admin-form { margin-top: 24px; }
 .login-public-link { display: inline-block; margin-top: 20px; font-size: 0.9rem; }
+.login-public-link:hover { text-decoration: none; }
 
 .activity-success { color: var(--admin-green); font-weight: 700; }
 .activity-failed { color: #ffaaa0; font-weight: 700; }
