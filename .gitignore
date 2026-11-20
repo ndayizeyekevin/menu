@@ -1,3 +1,4 @@
 /vendor/
 /config/smtp.php
-/.htaccess
+*.zip
+.htaccess
