@@ -11,11 +11,13 @@ ErrorDocument 500 /500.php
 ErrorDocument 502 /502.php
 ErrorDocument 503 /503.php
 
+RewriteRule ^(403|404|500|502|503)(\.php)?$ - [END,NC]
+
 RewriteCond %{THE_REQUEST} \s/+(.+?)\.php(?:[\s?]) [NC]
 RewriteCond %{REQUEST_URI} !/(403|404|500|502|503)\.php$ [NC]
 RewriteRule ^(.+)\.php$ $1 [R=301,L,NC]
 
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_URI} !/(403|404|500|502|503)$ [NC]
+RewriteCond %{REQUEST_FILENAME}.php -f
 RewriteRule ^(.+?)/?$ $1.php [END]
