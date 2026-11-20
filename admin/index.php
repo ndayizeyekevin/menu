@@ -152,7 +152,7 @@ try {
                         }
                     }
 
-                    $resetRequestMessage = 'If an account uses that email address and email delivery is available, reset instructions will arrive shortly. The link expires in one hour.';
+                    $resetRequestMessage = 'If an account uses that email address, reset instructions will be sent only if email delivery succeeds. The link expires in one hour.';
                 } else {
                     $errorMessage = 'Enter a valid email address.';
                 }
