@@ -2,6 +2,10 @@
 require_once __DIR__ . '/includes/admin_session.php';
 
 $landingCsrfToken = adminCsrfToken();
+$landingLoginError = isset($_SESSION['landing_login_error']) && is_string($_SESSION['landing_login_error'])
+    ? $_SESSION['landing_login_error']
+    : '';
+unset($_SESSION['landing_login_error']);
 $rooms = [
     ['Double Standard Room', 'A restful room with a working desk and a private mini balcony.', 'room-standard.webp', [['1 guest', '$60'], ['2 guests', '$80']]],
     ['Junior Studio Suite', 'A generous suite with separate living and dining spaces, plus a city-view balcony.', 'room-suite.webp', [['1 guest', '$120'], ['2 guests', '$140']]],
@@ -93,11 +97,11 @@ $gallery = [
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/landing.css?v=7">
+    <link rel="stylesheet" href="assets/css/landing.css?v=8">
 </head>
 <body>
     <header class="site-header">
-        <a class="site-brand" href="#home" aria-label="KABC Hotel home"><img src="assets/images/icon.png" alt=""><span>KABC <strong>HOTEL</strong></span></a>
+        <a class="site-brand" href="#home" aria-label="KABC Hotel home"><img src="assets/images/icon.png" alt=""></a>
         <nav class="site-nav" id="primaryNavigation" aria-label="Main navigation">
             <a href="#stay">Rooms</a><a href="#experience">The experience</a><a href="#gallery">Gallery</a>
             <a class="nav-menu-link" href="full_menu">Explore the menu <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a>
@@ -222,7 +226,28 @@ $gallery = [
         </section>
     </main>
 
-    <dialog class="login-dialog" id="adminLoginDialog" aria-labelledby="loginDialogTitle"><div class="login-dialog-content"><button class="login-dialog-close" type="button" data-login-close aria-label="Close sign-in dialog">&times;</button><p class="eyebrow eyebrow-dark"><span></span> KABC HOTEL ADMIN</p><h2 id="loginDialogTitle">Welcome back.</h2><p class="login-dialog-copy">Sign in to manage menu items and images.</p><form class="landing-login-form" action="admin/" method="post"><input type="hidden" name="csrf_token" value="<?= htmlspecialchars($landingCsrfToken, ENT_QUOTES, 'UTF-8') ?>"><input type="hidden" name="action" value="login"><label for="landingUsername">Username</label><input id="landingUsername" name="username" type="text" minlength="3" maxlength="64" placeholder="Enter username" autocomplete="username" required><label for="landingPassword">Password</label><input id="landingPassword" name="password" type="password" placeholder="Enter password" autocomplete="current-password" required><button class="button button-primary" type="submit">Sign in <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button></form><a class="login-recovery-link" href="admin/">Forgot your password?</a></div></dialog>
+    <dialog class="login-dialog" id="adminLoginDialog" aria-labelledby="loginDialogTitle">
+        <div class="login-dialog-content">
+            <button class="login-dialog-close" type="button" data-login-close aria-label="Close sign-in dialog">&times;</button>
+            <p class="eyebrow eyebrow-dark"><span></span> KABC HOTEL ADMIN</p>
+            <h2 id="loginDialogTitle">Welcome back.</h2>
+            <p class="login-dialog-copy">Sign in to manage menu items and images.</p>
+            <?php if ($landingLoginError !== ''): ?>
+                <div class="landing-login-error" role="alert" data-login-error><?= htmlspecialchars($landingLoginError, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></div>
+            <?php endif; ?>
+            <form class="landing-login-form" action="admin/" method="post">
+                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($landingCsrfToken, ENT_QUOTES, 'UTF-8') ?>">
+                <input type="hidden" name="action" value="login">
+                <input type="hidden" name="login_source" value="landing">
+                <label for="landingUsername">Username</label>
+                <input id="landingUsername" name="username" type="text" minlength="3" maxlength="64" placeholder="Enter username" autocomplete="username" required>
+                <label for="landingPassword">Password</label>
+                <input id="landingPassword" name="password" type="password" placeholder="Enter password" autocomplete="current-password" required>
+                <button class="button button-primary" type="submit">Sign in <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button>
+            </form>
+            <a class="login-recovery-link" href="admin/forgot_password">Forgot your password?</a>
+        </div>
+    </dialog>
 
     <?php require __DIR__ . '/includes/footer.php'; ?>
     <script src="assets/js/landing.js" defer></script>
