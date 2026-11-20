@@ -4,6 +4,10 @@ require_once __DIR__ . '/includes/auth_schema.php';
 
 $errorMessage = '';
 $setupMode = false;
+$landingLoginAttempt = $_SERVER['REQUEST_METHOD'] === 'POST'
+    && isset($_POST['login_source'])
+    && is_string($_POST['login_source'])
+    && $_POST['login_source'] === 'landing';
 
 try {
     $setupMode = initializeAdminAuthSchema($db);
@@ -143,6 +147,12 @@ try {
     error_log('Admin login initialization failed: ' . $e->getMessage());
     http_response_code(500);
     $errorMessage = 'Admin sign-in is temporarily unavailable. Please try again later.';
+}
+
+if ($landingLoginAttempt && !$setupMode && $errorMessage !== '') {
+    $_SESSION['landing_login_error'] = $errorMessage;
+    header('Location: ../#home');
+    exit;
 }
 
 if (!empty($_SESSION['admin_user_id'])) {
