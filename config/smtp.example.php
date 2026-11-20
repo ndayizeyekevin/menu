@@ -4,6 +4,7 @@
 require_once __DIR__ . '/../includes/env.php';
 
 return [
+    'transport' => (string) env('SMTP_TRANSPORT', 'smtp'),
     'host' => env('SMTP_HOST', ''),
     'port' => (int) env('SMTP_PORT', 587),
     'secure' => env('SMTP_SECURE', 'tls'),

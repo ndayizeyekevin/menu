@@ -1,0 +1,37 @@
+name: Deploy to Wasmer Edge
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install PHP dependencies
+        run: composer install --no-dev --prefer-dist --optimize-autoloader
+
+      - name: PHP syntax check
+        run: |
+          find . -path './vendor' -prune -o -name '*.php' -print0 | xargs -0 -n1 php -l
+
+      - name: Install Wasmer CLI
+        run: curl https://get.wasmer.io -sSfL | sh
+
+      - name: Deploy
+        env:
+          WASMER_TOKEN: ${{ secrets.WASMER_TOKEN }}
+          WASMER_OWNER: ${{ secrets.WASMER_OWNER }}
+          WASMER_APP_NAME: ${{ secrets.WASMER_APP_NAME }}
+        run: |
+          export PATH="$HOME/.wasmer/bin:$PATH"
+          sed -i "s/replace-with-your-app-name/$WASMER_APP_NAME/g" app.yaml
+          sed -i "s/replace-with-your-wasmer-owner/$WASMER_OWNER/g" app.yaml
+          test -n "$WASMER_OWNER"
+          test -n "$WASMER_APP_NAME"
+          wasmer deploy --non-interactive
