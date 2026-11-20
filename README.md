@@ -41,9 +41,9 @@ Edit `config/database.php` for each environment. Keep production credentials pri
 
 The admin account and login-history tables are created by the admin sign-in/setup page when it is first opened. Menu content tables must already exist and be populated separately.
 
-### Password-reset email (optional)
+### Email delivery
 
-Copy `config/smtp.example.php` to `config/smtp.php` and fill in the SMTP host, port, encryption mode, username, password, and sender details. `config/smtp.php` is excluded from version control. Password-reset email requires a working SMTP configuration.
+Copy `config/smtp.example.php` to `config/smtp.php` and fill in the SMTP host, port, encryption mode, username, password, and sender details. `config/smtp.php` is excluded from version control. The public room-enquiry form and admin password-reset email both require a working SMTP configuration. Room enquiries are sent to `reservations@kabchotel.rw`.
 
 ### Uploads
 

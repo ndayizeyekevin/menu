@@ -1,69 +1,21 @@
 <?php
 require_once __DIR__ . '/includes/bootstrap.php';
+require_once __DIR__ . '/includes/auth_schema.php';
 
 $errorMessage = '';
 $setupMode = false;
-$resetRequestMessage = '';
+$landingLoginAttempt = $_SERVER['REQUEST_METHOD'] === 'POST'
+    && isset($_POST['login_source'])
+    && is_string($_POST['login_source'])
+    && $_POST['login_source'] === 'landing';
 
 try {
-    $db->exec(
-        "CREATE TABLE IF NOT EXISTS admin_users (
-            id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
-            username VARCHAR(64) NOT NULL UNIQUE,
-            firstName VARCHAR(100) NULL,
-            lastName VARCHAR(100) NULL,
-            password_hash VARCHAR(255) NOT NULL,
-            password_reset_key VARCHAR(255) NULL,
-            reset_key_expiry TIMESTAMP NULL,
-            email VARCHAR(190) NOT NULL UNIQUE,
-            created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            last_login_at DATETIME NULL
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4"
-    );
-    $userColumns = $db->query('SHOW COLUMNS FROM admin_users')->fetchAll(PDO::FETCH_COLUMN, 0);
-    foreach ([
-        'firstName' => 'VARCHAR(100) NULL',
-        'lastName' => 'VARCHAR(100) NULL',
-        'password_reset_key' => 'VARCHAR(255) NULL',
-        'reset_key_expiry' => 'TIMESTAMP NULL',
-        'email' => 'VARCHAR(190) NULL',
-    ] as $column => $definition) {
-        if (!in_array($column, $userColumns, true)) {
-            $db->exec("ALTER TABLE admin_users ADD `$column` $definition");
-        }
-    }
-    $db->exec(
-        "CREATE TABLE IF NOT EXISTS admin_login_logs (
-            id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
-            user_id INT UNSIGNED NULL,
-            username VARCHAR(64) NOT NULL,
-            success TINYINT(1) NOT NULL,
-            ip_address VARCHAR(45) NOT NULL,
-            user_agent VARCHAR(255) NOT NULL,
-            created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            INDEX idx_admin_login_ip_success_date (ip_address, success, created_at),
-            INDEX idx_admin_login_date (created_at),
-            CONSTRAINT fk_admin_login_user
-                FOREIGN KEY (user_id) REFERENCES admin_users (id) ON DELETE SET NULL
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4"
-    );
-    $db->exec(
-        "CREATE TABLE IF NOT EXISTS admin_password_reset_requests (
-            id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
-            ip_address VARCHAR(45) NOT NULL,
-            created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            INDEX idx_admin_password_reset_ip_date (ip_address, created_at)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4"
-    );
-
-    $setupMode = (int) $db->query('SELECT COUNT(*) FROM admin_users')->fetchColumn() === 0;
+    $setupMode = initializeAdminAuthSchema($db);
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (!adminVerifyCsrfToken($_POST['csrf_token'] ?? null)) {
             $errorMessage = 'Your session has expired. Please try again.';
         } else {
-            $action = isset($_POST['action']) && is_string($_POST['action']) ? $_POST['action'] : 'login';
             $username = isset($_POST['username']) && is_string($_POST['username'])
                 ? trim($_POST['username'])
                 : '';
@@ -82,81 +34,7 @@ try {
             $remoteAddress = substr((string) ($_SERVER['REMOTE_ADDR'] ?? 'unknown'), 0, 45);
             $userAgent = substr((string) ($_SERVER['HTTP_USER_AGENT'] ?? ''), 0, 255);
 
-            if (!$setupMode && $action === 'request_password_reset') {
-                $db->exec(
-                    'DELETE FROM admin_password_reset_requests
-                     WHERE created_at < DATE_SUB(NOW(), INTERVAL 1 DAY)'
-                );
-                $recordRequest = $db->prepare(
-                    'INSERT INTO admin_password_reset_requests (ip_address) VALUES (:ip_address)'
-                );
-                $recordRequest->execute([':ip_address' => $remoteAddress]);
-                $recentRequests = $db->prepare(
-                    'SELECT COUNT(*) FROM admin_password_reset_requests
-                     WHERE ip_address = :ip_address
-                       AND created_at >= DATE_SUB(NOW(), INTERVAL 15 MINUTE)'
-                );
-                $recentRequests->execute([':ip_address' => $remoteAddress]);
-
-                if ((int) $recentRequests->fetchColumn() > 5) {
-                    $errorMessage = 'Too many reset requests. Please wait 15 minutes and try again.';
-                } elseif (filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                    $findUser = $db->prepare('SELECT id FROM admin_users WHERE email = :email');
-                    $findUser->execute([':email' => $email]);
-                    $user = $findUser->fetch();
-
-                    if ($user) {
-                        $token = bin2hex(random_bytes(32));
-                        $tokenHash = hash('sha256', $token);
-                        $saveToken = $db->prepare(
-                            'UPDATE admin_users
-                             SET password_reset_key = :token_hash,
-                                 reset_key_expiry = DATE_ADD(NOW(), INTERVAL 1 HOUR)
-                             WHERE id = :id'
-                        );
-                        $saveToken->execute([
-                            ':token_hash' => $tokenHash,
-                            ':id' => $user['id'],
-                        ]);
-
-                        $serverName = (string) ($_SERVER['SERVER_NAME'] ?? '');
-                        if ($serverName !== '' && preg_match('/^[a-zA-Z0-9.-]+$/', $serverName)) {
-                            $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-                            $port = (int) ($_SERVER['SERVER_PORT'] ?? 0);
-                            $portSuffix = $port > 0 && !(($scheme === 'http' && $port === 80) || ($scheme === 'https' && $port === 443))
-                                ? ':' . $port
-                                : '';
-                            $basePath = dirname(dirname((string) ($_SERVER['SCRIPT_NAME'] ?? '/admin/index.php')));
-                            $basePath = $basePath === '\\' || $basePath === '.' ? '' : rtrim(str_replace('\\', '/', $basePath), '/');
-                            $resetUrl = $scheme . '://' . $serverName . $portSuffix . $basePath
-                                . '/admin/reset_password?token=' . rawurlencode($token);
-
-                            try {
-                                require_once __DIR__ . '/../includes/password_reset_mailer.php';
-                                sendAdminPasswordResetEmail($email, $resetUrl);
-                            } catch (Throwable $e) {
-                                $db->prepare(
-                                    'UPDATE admin_users SET password_reset_key = NULL, reset_key_expiry = NULL
-                                     WHERE id = :id AND password_reset_key = :token_hash'
-                                )->execute([
-                                    ':id' => $user['id'],
-                                    ':token_hash' => $tokenHash,
-                                ]);
-                                error_log('Admin password reset email could not be sent: ' . $e->getMessage());
-                            }
-                        } else {
-                            $db->prepare(
-                                'UPDATE admin_users SET password_reset_key = NULL, reset_key_expiry = NULL WHERE id = :id'
-                            )->execute([':id' => $user['id']]);
-                            error_log('Admin password reset email could not be sent: invalid server name configuration.');
-                        }
-                    }
-
-                    $resetRequestMessage = 'If an account uses that email address and email delivery is available, reset instructions will arrive shortly. The link expires in one hour.';
-                } else {
-                    $errorMessage = 'Enter a valid email address.';
-                }
-            } elseif (!preg_match('/^[a-zA-Z0-9_.-]{3,64}$/', $username)) {
+            if (!preg_match('/^[a-zA-Z0-9_.-]{3,64}$/', $username)) {
                 $errorMessage = 'Use a username of 3–64 letters, numbers, dots, underscores, or hyphens.';
             } elseif ($setupMode && strlen($password) < 12) {
                 $errorMessage = 'Choose a password with at least 12 characters.';
@@ -271,6 +149,12 @@ try {
     $errorMessage = 'Admin sign-in is temporarily unavailable. Please try again later.';
 }
 
+if ($landingLoginAttempt && !$setupMode && $errorMessage !== '') {
+    $_SESSION['landing_login_error'] = $errorMessage;
+    header('Location: ../#home');
+    exit;
+}
+
 if (!empty($_SESSION['admin_user_id'])) {
     header('Location: dashboard.php');
     exit;
@@ -311,13 +195,8 @@ unset($_SESSION['admin_password_reset_notice']);
         <?php if ($passwordResetNotice !== ''): ?>
             <div class="notice success" role="status"><?= adminEscape($passwordResetNotice) ?></div>
         <?php endif; ?>
-        <?php if ($resetRequestMessage !== ''): ?>
-            <div class="notice success" role="status"><?= adminEscape($resetRequestMessage) ?></div>
-        <?php endif; ?>
-
         <form method="post" class="admin-form">
             <input type="hidden" name="csrf_token" value="<?= adminEscape(adminCsrfToken()) ?>">
-            <input type="hidden" name="action" value="<?= $setupMode ? 'setup' : 'login' ?>">
             <label for="username">Username</label>
             <input id="username" name="username" type="text" minlength="3" placeholder="Enter username" maxlength="64" autocomplete="username" required value="<?= adminEscape($_POST['username'] ?? '') ?>">
 
@@ -336,17 +215,9 @@ unset($_SESSION['admin_password_reset_notice']);
             <button class="button primary full-width" type="submit"><?= $setupMode ? 'Create admin account' : 'Sign in' ?></button>
         </form>
         <?php if (!$setupMode): ?>
-            <details class="reset-password">
-                <summary>Forgot your password?</summary>
-                <form method="post" class="admin-form">
-                    <input type="hidden" name="csrf_token" value="<?= adminEscape(adminCsrfToken()) ?>">
-                    <input type="hidden" name="action" value="request_password_reset">
-                    <label for="reset_email">Account email</label>
-                    <input id="reset_email" name="email" type="email" maxlength="190" autocomplete="email" required>
-                    <button class="button primary full-width" type="submit">Email reset link</button>
-                </form>
-            </details>
+            <a class="login-public-link" href="forgot_password.php">Forgot your password?</a>
         <?php endif; ?>
+        <br>
         <a class="login-public-link" href="../full_menu">View public menu</a>
     </main>
     <script src="../assets/js/password_visibility.js?v=1" defer></script>

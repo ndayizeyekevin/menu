@@ -1,14 +1,16 @@
 <?php
 
-// Copy this file to smtp.php and enter the SMTP credentials for this environment.
+// SMTP settings are loaded from the root .env file.
+require_once __DIR__ . '/../includes/env.php';
+
 return [
-    'host' => 'smtp.example.com',
-    'port' => 587,
-    'secure' => 'tls',
-    'username' => 'your-smtp-username',
-    'password' => 'your-smtp-password',
-    'from_email' => 'no-reply@nusk.rw',
-    'from_name' => 'NUSK Support',
-    'support_email' => 'info@nusk.rw',
-    'support_phone' => '(+250) 786 591 604',
+    'host' => env('SMTP_HOST', ''),
+    'port' => (int) env('SMTP_PORT', 587),
+    'secure' => env('SMTP_SECURE', 'tls'),
+    'username' => env('SMTP_USERNAME', ''),
+    'password' => env('SMTP_PASSWORD', ''),
+    'from_email' => env('SMTP_FROM_EMAIL', ''),
+    'from_name' => env('SMTP_FROM_NAME', 'KABC Hotel'),
+    'support_email' => env('SMTP_SUPPORT_EMAIL', ''),
+    'support_phone' => env('SMTP_SUPPORT_PHONE', ''),
 ];
