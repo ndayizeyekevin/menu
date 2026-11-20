@@ -326,9 +326,6 @@ a { color: var(--admin-green); }
     color: var(--admin-text);
 }
 
-.reset-password { margin-top: 22px; }
-.reset-password summary { color: var(--admin-green); cursor: pointer; }
-.reset-password .admin-form { margin-top: 16px; }
 .recovery-card { margin-top: 20px; }
 
 .table-wrap { overflow-x: auto; }
