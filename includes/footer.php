@@ -1,7 +1,7 @@
 <footer class="hotel-footer">
     <div class="footer-main">
         <div class="footer-brand">
-            <a class="site-brand" href="./#home" aria-label="KABC Hotel home"><img src="assets/images/icon.png" alt=""><span>KABC <strong>HOTEL</strong></span></a>
+            <a class="site-brand" href="./#home" aria-label="KABC Hotel home"><img src="assets/images/icon.png" alt=""></a>
             <p>A warm welcome, a comfortable stay and a little more time to enjoy Kigali.</p>
         </div>
         <div class="footer-column">
