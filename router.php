@@ -1,5 +1,7 @@
 <?php
 
+header_remove('X-Powered-By');
+
 if (!function_exists('str_starts_with')) {
     function str_starts_with(string $haystack, string $needle): bool
     {

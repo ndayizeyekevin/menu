@@ -1,4 +1,6 @@
 <?php
+header_remove('X-Powered-By');
+
 $errorPages = [
     403 => [
         'eyebrow' => 'ACCESS RESTRICTED',
@@ -54,9 +56,8 @@ $basePath = $basePath === '' ? '' : $basePath;
         .glow { position: absolute; width: min(72vw, 760px); aspect-ratio: 1; top: -37%; right: -13%; border-radius: 50%; background: radial-gradient(circle, rgba(216,174,104,.2), rgba(216,174,104,0) 68%); }
         .ring { position: absolute; width: min(76vw, 780px); aspect-ratio: 1; right: -21%; bottom: -72%; border: 1px solid rgba(182,212,154,.18); border-radius: 50%; box-shadow: 0 0 0 54px rgba(182,212,154,.035), 0 0 0 108px rgba(182,212,154,.025); }
         main { position: relative; width: min(100%, 720px); padding: clamp(36px, 8vw, 76px); border: 1px solid rgba(244,240,230,.16); background: rgba(11,33,27,.62); box-shadow: 0 32px 100px rgba(0,0,0,.18); }
-        .brand { display: inline-flex; align-items: center; gap: 12px; color: var(--paper); text-decoration: none; font-size: .8rem; font-weight: 700; letter-spacing: .14em; }
-        .brand img { width: 48px; height: 38px; object-fit: contain; }
-        .brand strong { color: var(--leaf); font-weight: 500; }
+        .brand { display: inline-flex; align-items: center; color: var(--paper); text-decoration: none; }
+        .brand img { display: block; width: clamp(110px, 18vw, 160px); height: auto; max-height: 100px; object-fit: contain; }
         .eyebrow { display: flex; align-items: center; gap: 11px; margin: clamp(48px, 8vh, 76px) 0 17px; color: var(--leaf); font-size: .72rem; font-weight: 700; letter-spacing: .18em; }
         .eyebrow::before { width: 26px; height: 1px; background: var(--gold); content: ""; }
         .code { position: absolute; top: 35px; right: clamp(28px, 6vw, 60px); color: rgba(244,240,230,.08); font-family: "Playfair Display", Georgia, serif; font-size: clamp(4rem, 12vw, 8rem); line-height: 1; }
@@ -78,7 +79,6 @@ $basePath = $basePath === '' ? '' : $basePath;
         <span class="code" aria-hidden="true"><?= $statusCode ?></span>
         <a class="brand" href="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/" aria-label="KABC Hotel home">
             <img src="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/assets/images/icon.png" alt="">
-            <span>KABC <strong>HOTEL</strong></span>
         </a>
         <p class="eyebrow"><?= htmlspecialchars($page['eyebrow'], ENT_QUOTES, 'UTF-8') ?></p>
         <h1><?= htmlspecialchars($page['title'], ENT_QUOTES, 'UTF-8') ?></h1>
@@ -88,7 +88,6 @@ $basePath = $basePath === '' ? '' : $basePath;
             <a class="button button-secondary" href="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/full_menu">Explore the menu</a>
         </div>
         
-        <p class="footnote">KABC HOTEL &nbsp;&middot;&nbsp; GATHER WELL. EAT JOYFULLY.</p>
     </main>
 </body>
 </html>

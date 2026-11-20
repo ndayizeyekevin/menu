@@ -1,5 +1,9 @@
 RewriteEngine On
 
+<IfModule mod_headers.c>
+    Header always unset X-Powered-By
+</IfModule>
+
 <Files ".env">
     Require all denied
 </Files>
