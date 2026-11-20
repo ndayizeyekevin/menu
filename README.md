@@ -59,14 +59,15 @@ On Apache/shared hosting, `.htaccess` rewrites extensionless URLs and blocks pri
 
 ## Wasmer deployment
 
-The project includes `router.php`, `app.yaml`, `wasmer.toml`, and a GitHub Actions deployment workflow.
+The project includes `router.php`, `app.yaml`, `wasmer.toml`, and a persistent-session migration. It does not require a GitHub Actions token for Wasmer deployments.
 
-1. Replace `replace-with-your-app-name` and `replace-with-your-wasmer-owner` in `app.yaml`.
-2. Create the Wasmer MySQL database capability and deploy once, or enable it in `app.yaml`.
-3. Import the existing menu/category data into the managed database.
-4. Add SMTP sender settings and any SMTP credentials through Wasmer secrets. For built-in email, keep `SMTP_TRANSPORT=sendmail`.
-5. In GitHub, add `WASMER_TOKEN`, `WASMER_OWNER`, and `WASMER_APP_NAME` under Settings → Secrets and variables → Actions → Repository secrets. Push to `main` to deploy.
-6. Admin sessions are stored in MySQL through `app_sessions`; the schema is at `database/session.sql`. The application creates this table automatically when it starts.
+1. In Wasmer, import this GitHub repository and connect it to an app.
+2. Let Wasmer generate or update the app owner and app name in `app.yaml`.
+3. Create the Wasmer MySQL database capability and deploy once, or enable it in `app.yaml`.
+4. Import the existing menu/category data into the managed database.
+5. Add SMTP sender settings and credentials through Wasmer app environment variables or secrets. For built-in email, keep `SMTP_TRANSPORT=sendmail`.
+6. Push to the repository branch configured in Wasmer to trigger redeployment.
+7. Admin sessions are stored in MySQL through `app_sessions`; the schema is at `database/session.sql`. The application creates this table automatically when it starts.
 
 ## External assets
 
