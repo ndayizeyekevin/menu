@@ -3,14 +3,9 @@
 // SMTP settings are loaded from the root .env file.
 require_once __DIR__ . '/../includes/env.php';
 
-$smtpPort = env('SMTP_PORT', 587);
-$smtpPort = is_string($smtpPort) && ctype_digit(trim($smtpPort))
-    ? (int) trim($smtpPort)
-    : 587;
-
 return [
     'host' => env('SMTP_HOST', ''),
-    'port' => $smtpPort,
+    'port' => (int) env('SMTP_PORT', 587),
     'secure' => env('SMTP_SECURE', 'tls'),
     'username' => env('SMTP_USERNAME', ''),
     'password' => env('SMTP_PASSWORD', ''),
