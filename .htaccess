@@ -12,8 +12,10 @@ ErrorDocument 502 /502.php
 ErrorDocument 503 /503.php
 
 RewriteCond %{THE_REQUEST} \s/+(.+?)\.php(?:[\s?]) [NC]
+RewriteCond %{REQUEST_URI} !/(403|404|500|502|503)\.php$ [NC]
 RewriteRule ^(.+)\.php$ $1 [R=301,L,NC]
 
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !-f
-RewriteRule ^(.+?)/?$ $1.php [L]
+RewriteCond %{REQUEST_URI} !/(403|404|500|502|503)$ [NC]
+RewriteRule ^(.+?)/?$ $1.php [END]

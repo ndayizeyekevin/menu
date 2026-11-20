@@ -2,3 +2,4 @@
 /config/smtp.php
 *.zip
 /.env
+.htaccess
