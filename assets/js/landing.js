@@ -23,4 +23,9 @@
             openButton.focus();
         }
     });
+
+    if (dialog.querySelector('[data-login-error]')) {
+        dialog.showModal();
+        dialog.querySelector('input[name="username"]').focus();
+    }
 })();
