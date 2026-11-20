@@ -1,4 +1,6 @@
 <?php
+header_remove('X-Powered-By');
+
 $errorPages = [
     403 => [
         'eyebrow' => 'ACCESS RESTRICTED',

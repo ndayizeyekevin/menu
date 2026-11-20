@@ -1,5 +1,7 @@
 <?php
 
+header_remove('X-Powered-By');
+
 if (session_status() !== PHP_SESSION_ACTIVE) {
     $databaseSessionHandler = null;
     try {
