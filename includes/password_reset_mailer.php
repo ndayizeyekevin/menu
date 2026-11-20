@@ -4,51 +4,14 @@ use PHPMailer\PHPMailer\Exception as MailException;
 use PHPMailer\PHPMailer\PHPMailer;
 
 require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '/smtp_config.php';
 
 function sendAdminPasswordResetEmail(string $recipient, string $resetUrl): void
 {
-    $configPath = __DIR__ . '/../config/smtp.php';
-    if (
-        !is_file($configPath)
-        || !is_readable($configPath)
-    ) {
-        throw new RuntimeException('SMTP configuration file is missing or unreadable.');
-    }
-
-    $config = require $configPath;
-    if (
-        !is_array($config)
-        || !isset($config['host'], $config['port'], $config['secure'], $config['username'], $config['password'])
-        || !is_string($config['host']) || $config['host'] === ''
-        || !is_int($config['port']) || $config['port'] < 1 || $config['port'] > 65535
-        || !is_string($config['secure']) || !in_array(strtolower($config['secure']), ['tls', 'ssl'], true)
-        || !is_string($config['username']) || $config['username'] === ''
-        || !is_string($config['password']) || $config['password'] === ''
-    ) {
-        throw new RuntimeException('SMTP configuration is incomplete or invalid.');
-    }
-
-    $fromEmail = $config['from_email'] ?? $config['username'];
-    $fromName = $config['from_name'] ?? 'KABC Hotel';
-    if (
-        !is_string($fromEmail) || filter_var($fromEmail, FILTER_VALIDATE_EMAIL) === false
-        || !is_string($fromName) || trim($fromName) === ''
-    ) {
-        throw new RuntimeException('SMTP sender email or name is invalid.');
-    }
-
-    $supportEmail = $config['support_email'] ?? '';
-    $supportPhone = $config['support_phone'] ?? '';
-    $supportPhoneLink = is_string($supportPhone)
-        ? preg_replace('/[^0-9+]/', '', $supportPhone)
-        : '';
-    if (
-        !is_string($supportEmail) || filter_var($supportEmail, FILTER_VALIDATE_EMAIL) === false
-        || !is_string($supportPhone) || !is_string($supportPhoneLink)
-        || preg_match('/^\+[0-9]{8,15}$/', $supportPhoneLink) !== 1
-    ) {
-        throw new RuntimeException('SMTP support contact details are invalid.');
-    }
+    $config = loadSmtpConfig(true);
+    $supportEmail = $config['support_email'];
+    $supportPhone = $config['support_phone'];
+    $supportPhoneLink = preg_replace('/[^0-9+]/', '', $supportPhone);
 
     $mailer = new PHPMailer(true);
     $mailer->isSMTP();
@@ -57,12 +20,12 @@ function sendAdminPasswordResetEmail(string $recipient, string $resetUrl): void
     $mailer->SMTPAuth = true;
     $mailer->Username = $config['username'];
     $mailer->Password = $config['password'];
-    $mailer->SMTPSecure = strtolower($config['secure']) === 'ssl'
+    $mailer->SMTPSecure = $config['secure'] === 'ssl'
         ? PHPMailer::ENCRYPTION_SMTPS
         : PHPMailer::ENCRYPTION_STARTTLS;
     $mailer->Timeout = 15;
     $mailer->CharSet = PHPMailer::CHARSET_UTF8;
-    $mailer->setFrom($fromEmail, $fromName);
+    $mailer->setFrom($config['from_email'], $config['from_name']);
     $mailer->addAddress($recipient);
     $mailer->isHTML(true);
     $mailer->Subject = 'Reset your KABC Hotel admin password';
@@ -85,7 +48,9 @@ function sendAdminPasswordResetEmail(string $recipient, string $resetUrl): void
         . $escapedSupportPhone . '</a></small></p>';
 
     try {
-        $mailer->send();
+        if (!$mailer->send()) {
+            throw new RuntimeException('SMTP server did not accept the password reset email.');
+        }
     } catch (MailException $e) {
         throw new RuntimeException('Unable to send admin password reset email.', 0, $e);
     }
