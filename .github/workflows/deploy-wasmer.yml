@@ -30,12 +30,22 @@ jobs:
           WASMER_APP_NAME: ${{ secrets.WASMER_APP_NAME }}
         run: |
           set -euo pipefail
-          test -n "${WASMER_TOKEN:?WASMER_TOKEN GitHub secret is required}"
-          test -n "${WASMER_OWNER:?WASMER_OWNER GitHub secret is required}"
-          test -n "${WASMER_APP_NAME:?WASMER_APP_NAME GitHub secret is required}"
+          missing_secrets=()
+          test -n "${WASMER_TOKEN:-}" || missing_secrets+=("WASMER_TOKEN")
+          test -n "${WASMER_OWNER:-}" || missing_secrets+=("WASMER_OWNER")
+          test -n "${WASMER_APP_NAME:-}" || missing_secrets+=("WASMER_APP_NAME")
+          if (( ${#missing_secrets[@]} > 0 )); then
+            echo "::error::Missing GitHub secrets: ${missing_secrets[*]}"
+            echo "Add them under Settings -> Secrets and variables -> Actions -> Repository secrets."
+            exit 1
+          fi
 
           sed -i "s/replace-with-your-app-name/${WASMER_APP_NAME}/g" app.yaml
           sed -i "s/replace-with-your-wasmer-owner/${WASMER_OWNER}/g" app.yaml
+          if grep -q "replace-with-your-" app.yaml; then
+            echo "::error::app.yaml still contains deployment placeholders"
+            exit 1
+          fi
 
           wasmer --version
           wasmer deploy -v
