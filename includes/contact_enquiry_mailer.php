@@ -10,15 +10,20 @@ function sendKabcRoomEnquiry(array $enquiry): void
     $config = loadSmtpConfig();
 
     $mailer = new PHPMailer(true);
-    $mailer->isSMTP();
-    $mailer->Host = $config['host'];
-    $mailer->Port = $config['port'];
-    $mailer->SMTPAuth = true;
-    $mailer->Username = $config['username'];
-    $mailer->Password = $config['password'];
-    $mailer->SMTPSecure = $config['secure'] === 'ssl'
-        ? PHPMailer::ENCRYPTION_SMTPS
-        : PHPMailer::ENCRYPTION_STARTTLS;
+    if ($config['transport'] === 'sendmail') {
+        $mailer->isSendmail();
+        $mailer->Sendmail = $config['sendmail_path'];
+    } else {
+        $mailer->isSMTP();
+        $mailer->Host = $config['host'];
+        $mailer->Port = $config['port'];
+        $mailer->SMTPAuth = true;
+        $mailer->Username = $config['username'];
+        $mailer->Password = $config['password'];
+        $mailer->SMTPSecure = $config['secure'] === 'ssl'
+            ? PHPMailer::ENCRYPTION_SMTPS
+            : PHPMailer::ENCRYPTION_STARTTLS;
+    }
     $mailer->Timeout = 15;
     $mailer->CharSet = PHPMailer::CHARSET_UTF8;
     $mailer->setFrom($config['from_email'], $config['from_name']);

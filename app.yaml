@@ -1,0 +1,30 @@
+kind: wasmer.io/App.v0
+name: replace-with-your-app-name
+owner: replace-with-your-wasmer-owner
+package: .
+
+enable_email: true
+
+env:
+  SMTP_TRANSPORT: sendmail
+  SENDMAIL_PATH: sendmail -t -i
+  UPLOAD_DIR: /data/uploads
+  UPLOAD_URL_PATH: uploads
+
+volumes:
+  - name: uploads
+    mount: /data
+
+capabilities:
+  database:
+    engine: mysql
+  instaboot:
+    requests:
+      - path: /
+
+scaling:
+  mode: single_concurrency
+
+locality:
+  regions:
+    - fr-roub1

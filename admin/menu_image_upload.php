@@ -9,8 +9,9 @@ $csrfToken = $_SESSION[$csrfSessionKey];
 
 $message = '';
 $messageClass = '';
-$uploadDir = __DIR__ . '/../uploads';
-$uploadUrlPath = 'uploads';
+$storageConfig = require __DIR__ . '/../config/storage.php';
+$uploadDir = $storageConfig['upload_dir'];
+$uploadUrlPath = trim((string) $storageConfig['upload_url_path'], '/');
 $maxUploadSize = 5 * 1024 * 1024;
 
 function setFlashMessage(string $message, string $class = 'success'): void

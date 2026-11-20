@@ -1,5 +1,12 @@
 <?php
 
+if (!function_exists('str_starts_with')) {
+    function str_starts_with(string $haystack, string $needle): bool
+    {
+        return $needle === '' || strncmp($haystack, $needle, strlen($needle)) === 0;
+    }
+}
+
 function loadEnv(string $path): void
 {
     if (!is_file($path) || !is_readable($path)) {
@@ -43,7 +50,7 @@ function loadEnv(string $path): void
     }
 }
 
-function env(string $name, mixed $default = null): mixed
+function env(string $name, $default = null)
 {
     $value = getenv($name);
     if ($value !== false) {

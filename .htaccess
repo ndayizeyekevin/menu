@@ -1,0 +1,19 @@
+RewriteEngine On
+RewriteBase /
+
+<Files ".env">
+    Require all denied
+</Files>
+
+ErrorDocument 403 /403.php
+ErrorDocument 404 /404.php
+ErrorDocument 500 /500.php
+ErrorDocument 502 /502.php
+ErrorDocument 503 /503.php
+
+RewriteCond %{THE_REQUEST} \s/+(.+?)\.php(?:[\s?]) [NC]
+RewriteRule ^(.+)\.php$ $1 [R=301,L,NC]
+
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^(.+?)/?$ $1.php [L]
