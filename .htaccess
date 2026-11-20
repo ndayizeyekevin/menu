@@ -1,23 +1,19 @@
 RewriteEngine On
 
-<IfModule mod_headers.c>
-    Header always unset X-Powered-By
-</IfModule>
-
 <Files ".env">
-    Require all denied
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Deny from all
+    </IfModule>
 </Files>
-
-RewriteRule ^(403|404|500|502|503)(\.php)?$ - [END,NC]
-
-RewriteCond %{THE_REQUEST} \s/+(.+?)\.php(?:[\s?]) [NC]
-RewriteRule ^(.+)\.php$ $1 [R=301,L,NC]
 
 RewriteCond %{REQUEST_FILENAME} -f [OR]
 RewriteCond %{REQUEST_FILENAME} -d
-RewriteRule ^ - [END]
+RewriteRule ^ - [L]
 
 RewriteCond %{REQUEST_FILENAME}.php -f
-RewriteRule ^(.+?)/?$ $1.php [END]
+RewriteRule ^(.+?)/?$ $1.php [L]
 
-RewriteRule ^ 404.php [END]
+RewriteRule ^ 404.php [L]
