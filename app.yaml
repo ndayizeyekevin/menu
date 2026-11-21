@@ -8,6 +8,10 @@ enable_email: true
 env:
   SMTP_TRANSPORT: sendmail
   SENDMAIL_PATH: sendmail -t -i
+  SMTP_FROM_EMAIL: reservations@kabchotel.rw
+  SMTP_FROM_NAME: KABC Hotel
+  SMTP_SUPPORT_EMAIL: info@kabchotel.rw
+  SMTP_SUPPORT_PHONE: "+250 794 095 885"
   UPLOAD_DIR: /data/uploads
   UPLOAD_URL_PATH: uploads
 
