@@ -62,14 +62,13 @@ try {
 
                     $serverName = (string) ($_SERVER['SERVER_NAME'] ?? '');
                     if ($serverName !== '' && preg_match('/^[a-zA-Z0-9.-]+$/', $serverName)) {
-                        $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-                        $port = (int) ($_SERVER['SERVER_PORT'] ?? 0);
-                        $portSuffix = $port > 0 && !(($scheme === 'http' && $port === 80) || ($scheme === 'https' && $port === 443))
-                            ? ':' . $port
-                            : '';
+                        $forwardedProto = strtolower(trim(explode(',', (string) ($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? ''))[0]));
+                        $scheme = in_array($forwardedProto, ['http', 'https'], true)
+                            ? $forwardedProto
+                            : ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http');
                         $basePath = dirname(dirname((string) ($_SERVER['SCRIPT_NAME'] ?? '/admin/forgot_password.php')));
                         $basePath = $basePath === '\\' || $basePath === '.' ? '' : rtrim(str_replace('\\', '/', $basePath), '/');
-                        $resetUrl = $scheme . '://' . $serverName . $portSuffix . $basePath
+                        $resetUrl = $scheme . '://' . $serverName . $basePath
                             . '/admin/reset_password?token=' . rawurlencode($token);
 
                         try {
