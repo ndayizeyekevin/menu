@@ -3,8 +3,12 @@
 function loadSmtpConfig(bool $requireSupportContact = false): array
 {
     $configPath = __DIR__ . '/../config/smtp.php';
+    if (!is_file($configPath)) {
+        $configPath = __DIR__ . '/../config/smtp.example.php';
+    }
+
     if (!is_file($configPath) || !is_readable($configPath)) {
-        throw new RuntimeException('SMTP configuration is not available.');
+        throw new RuntimeException('Neither config/smtp.php nor config/smtp.example.php is available and readable.');
     }
 
     $config = require $configPath;
