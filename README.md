@@ -44,8 +44,9 @@ Database configuration accepts both `DB_NAME` (used by Wasmer) and `DB_DATABASE`
 
 ### Email delivery
 
-Copy `config/smtp.example.php` to `config/smtp.php` and fill in the SMTP host, port, encryption mode, username, password, and sender details. `config/smtp.php` is excluded from version control. The public room-enquiry form and admin password-reset email both require a working SMTP configuration. Room enquiries are sent to `reservations@kabchotel.rw`.
-Set `SMTP_TRANSPORT=sendmail` on Wasmer and `SMTP_TRANSPORT=smtp` for external SMTP providers. Wasmer email requires `enable_email: true` in `app.yaml` and a paid plan.
+For local or shared hosting with external SMTP, set the SMTP host, port, encryption mode, username, password, and sender details in the private `.env` file. The public room-enquiry form and admin password-reset email both require a working email configuration. Room enquiries are sent to `reservations@kabchotel.rw`.
+
+Wasmer's built-in email uses `SMTP_TRANSPORT=sendmail` and does not require SMTP login credentials. It does require `enable_email: true` in `app.yaml` and a paid plan. Set a valid `SMTP_FROM_EMAIL`, `SMTP_FROM_NAME`, `SMTP_SUPPORT_EMAIL`, and `SMTP_SUPPORT_PHONE` in the Wasmer app environment; the sender address should belong to a domain you control. The current public KABC contact details are prefilled in `app.yaml`.
 
 ### Uploads
 
@@ -65,7 +66,7 @@ The project includes `router.php`, `app.yaml`, `wasmer.toml`, and a persistent-s
 2. Let Wasmer generate or update the app owner and app name in `app.yaml`.
 3. Create the Wasmer MySQL database capability and deploy once, or enable it in `app.yaml`.
 4. Import the existing menu/category data into the managed database.
-5. Add SMTP sender settings and credentials through Wasmer app environment variables or secrets. For built-in email, keep `SMTP_TRANSPORT=sendmail`.
+5. For built-in email, keep `SMTP_TRANSPORT=sendmail` and configure the sender/support details in `app.yaml` or Wasmer app environment. SMTP username/password credentials are not used by this transport.
 6. Push to the repository branch configured in Wasmer to trigger redeployment.
 7. Admin sessions are stored in MySQL through `app_sessions`; the schema is at `database/session.sql`. The application creates this table automatically when it starts.
 

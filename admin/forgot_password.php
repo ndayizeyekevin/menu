@@ -75,6 +75,7 @@ try {
                         try {
                             require_once __DIR__ . '/../includes/password_reset_mailer.php';
                             sendAdminPasswordResetEmail($email, $resetUrl);
+                            error_log('Admin password reset email accepted by the configured mail transport.');
                         } catch (Throwable $e) {
                             $db->prepare(
                                 'UPDATE admin_users SET password_reset_key = NULL, reset_key_expiry = NULL
@@ -93,7 +94,7 @@ try {
                     }
                 }
 
-                $resetRequestMessage = 'If an account uses that email address, reset instructions will be sent only if email delivery succeeds. The link expires in one hour.';
+                $resetRequestMessage = 'For security, we can’t confirm whether an account uses that address. If it does and the email service accepts delivery, a reset link will arrive. If you don’t receive one, contact support.';
             }
         }
     }
@@ -124,13 +125,13 @@ try {
         </a>
         <p class="eyebrow">KABC HOTEL ADMIN</p>
         <h1>Forgot your password?</h1>
-        <p class="muted">Enter the email address linked to your admin account. If an account exists, we’ll send a reset link.</p>
+        <p class="muted">Enter the email address linked to your admin account. For security, we can’t confirm whether an account uses that address.</p>
 
         <?php if ($errorMessage !== ''): ?>
             <div class="notice error" role="alert"><?= adminEscape($errorMessage) ?></div>
         <?php endif; ?>
         <?php if ($resetRequestMessage !== ''): ?>
-            <div class="notice success" role="status"><?= adminEscape($resetRequestMessage) ?></div>
+            <div class="notice" role="status"><?= adminEscape($resetRequestMessage) ?></div>
         <?php endif; ?>
 
         <form method="post" class="admin-form">
