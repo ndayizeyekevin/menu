@@ -66,6 +66,19 @@ foreach ($privatePaths as $privatePath) {
     }
 }
 
+if (
+    preg_match('/\.php$/i', $path)
+    && in_array(strtoupper($_SERVER['REQUEST_METHOD'] ?? 'GET'), ['GET', 'HEAD'], true)
+) {
+    $query = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_QUERY);
+    $location = substr($path, 0, -4);
+    if (is_string($query) && $query !== '') {
+        $location .= '?' . $query;
+    }
+    header('Location: ' . $location, true, 301);
+    return true;
+}
+
 $file = realpath($root . $path);
 if ($file !== false && is_file($file)) {
     $relative = str_replace('\\', '/', substr($file, strlen($root)));
