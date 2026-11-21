@@ -9,7 +9,7 @@ $email = '';
 try {
     $setupMode = initializeAdminAuthSchema($db);
     if ($setupMode) {
-        header('Location: index');
+        header('Location: index.php');
         exit;
     }
 
@@ -139,7 +139,7 @@ try {
             <input id="email" name="email" type="email" maxlength="190" autocomplete="email" required value="<?= adminEscape($email) ?>">
             <button class="button primary full-width" type="submit">Email reset link</button>
         </form>
-        <a class="login-public-link" href="index">Return to sign in</a>
+        <a class="login-public-link" href="index.php">Return to sign in</a>
     </main>
     <script src="../assets/js/password_visibility.js?v=1" defer></script>
 </body>

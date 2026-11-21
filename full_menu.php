@@ -126,7 +126,7 @@ function renderMenuColumn(array $categories): void
             <div class="search-wrap">
                 <input id="menuSearch" class="menu-search" type="search" placeholder="Search dishes, categories or descriptions…" aria-label="Search menu items">
             </div>
-            <a class="export-link" href="menu_table" target="_blank" rel="noopener">Download menu <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a>
+            <a class="export-link" href="menu_table.php" target="_blank" rel="noopener">Download menu <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a>
         </div>
     </header>
 

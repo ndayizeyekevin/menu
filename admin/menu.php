@@ -48,7 +48,7 @@ try {
                 <h1>Menu items</h1>
                 <p class="muted">Search and edit item names, descriptions, and prices.</p>
             </div>
-            <a class="button primary" href="menu_image_upload">Upload image</a>
+            <a class="button primary" href="menu_image_upload.php">Upload image</a>
         </header>
 
         <?php if ($flash): ?>
@@ -59,7 +59,7 @@ try {
             <label class="visually-hidden" for="menuSearch">Search menu</label>
             <input id="menuSearch" name="q" type="search" value="<?= adminEscape($search) ?>" placeholder="Search by item or description">
             <button class="button primary" type="submit">Search</button>
-            <a class="button" id="clearMenuSearch" href="menu"<?= $search === '' ? ' hidden' : '' ?>>Clear</a>
+            <a class="button" id="clearMenuSearch" href="menu.php"<?= $search === '' ? ' hidden' : '' ?>>Clear</a>
         </form>
 
         <section class="admin-card table-wrap">
@@ -75,7 +75,7 @@ try {
                         <td><?= adminEscape($item['menu_desc']) ?></td>
                         <td><?= number_format((float) $item['menu_price']) ?> RWF</td>
                         <td><?= !empty($item['image_path']) ? 'Available' : 'None' ?></td>
-                        <td><a class="button" href="menu_edit?id=<?= (int) $item['menu_id'] ?>">Edit</a></td>
+                        <td><a class="button" href="menu_edit.php?id=<?= (int) $item['menu_id'] ?>">Edit</a></td>
                     </tr>
                 <?php endforeach; ?>
                 <?php if (!$menuItems): ?><tr><td colspan="5" class="muted">No menu items found.</td></tr><?php endif; ?>

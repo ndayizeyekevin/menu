@@ -55,7 +55,7 @@ Uploaded menu images are saved under `uploads/` by default. Set `UPLOAD_DIR` and
 
 The project `.htaccess` currently assumes it is served from `/kabc_menu/` and maps 403, 404, 500, 502, and 503 responses to the corresponding PHP pages. If the application is installed at a different URL path, update `RewriteBase` and the `ErrorDocument` paths to match.
 
-On Apache/shared hosting, `.htaccess` rewrites extensionless URLs, redirects direct `.php` page requests to extensionless URLs, and blocks private configuration directories. For Wasmer or any server without Apache rewrites, `router.php` provides equivalent PHP routing and private-path protection. Enable HTTPS in production, and ensure the production server has the required PHP extensions and writable upload directory.
+On Apache/shared hosting, `.htaccess` rewrites extensionless URLs and blocks private configuration directories. For Wasmer or any server without Apache rewrites, `router.php` provides equivalent PHP routing and private-path protection. Enable HTTPS in production, and ensure the production server has the required PHP extensions and writable upload directory.
 
 ## Wasmer deployment
 

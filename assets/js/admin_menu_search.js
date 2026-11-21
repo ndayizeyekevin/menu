@@ -41,7 +41,7 @@
             var actionCell = document.createElement('td');
             var editLink = document.createElement('a');
             editLink.className = 'button';
-            editLink.href = 'menu_edit?id=' + encodeURIComponent(item.id);
+            editLink.href = 'menu_edit.php?id=' + encodeURIComponent(item.id);
             editLink.textContent = 'Edit';
             actionCell.appendChild(editLink);
             row.appendChild(actionCell);
@@ -69,7 +69,7 @@
         window.history.replaceState({}, '', url);
 
         try {
-            var response = await fetch('menu_search?q=' + encodeURIComponent(query), {
+            var response = await fetch('menu_search.php?q=' + encodeURIComponent(query), {
                 headers: { Accept: 'application/json' },
                 credentials: 'same-origin',
                 signal: controller.signal

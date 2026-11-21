@@ -53,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     if ($update->rowCount() === 1) {
                         $db->commit();
                         $_SESSION['admin_password_reset_notice'] = 'Password reset. Sign in using your new password.';
-                        header('Location: index');
+                        header('Location: index.php');
                         exit;
                     }
                 }
@@ -129,7 +129,7 @@ if ($validToken && $errorMessage === '') {
                 <button class="button primary full-width" type="submit">Reset password</button>
             </form>
         <?php else: ?>
-            <a class="button primary full-width" href="index">Return to sign in</a>
+            <a class="button primary full-width" href="index.php">Return to sign in</a>
         <?php endif; ?>
     </main>
     <script src="../assets/js/password_visibility.js?v=1" defer></script>
