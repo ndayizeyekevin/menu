@@ -2,17 +2,20 @@
 
 use PHPMailer\PHPMailer\PHPMailer;
 
-require_once __DIR__ . '/includes/require_admin.php';
+require_once __DIR__ . '/includes/bootstrap.php';
 require_once __DIR__ . '/../vendor/autoload.php';
 require_once __DIR__ . '/../includes/smtp_config.php';
 
 $recipient = 'ndayizeyekevin6@gmail.com';
+$isAdmin = !empty($_SESSION['admin_user_id']);
 $config = [];
-$errorMessage = '';
+$errorMessage = $isAdmin ? '' : 'Sign in to the admin area before testing email settings.';
 $successMessage = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (!adminVerifyCsrfToken($_POST['csrf_token'] ?? null)) {
+    if (!$isAdmin) {
+        $errorMessage = 'Sign in to the admin area before testing email settings.';
+    } elseif (!adminVerifyCsrfToken($_POST['csrf_token'] ?? null)) {
         $errorMessage = 'Your session has expired. Reload the page and try again.';
     } else {
         try {
@@ -90,11 +93,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="notice info" role="status"><?= adminEscape($successMessage) ?></div>
         <?php endif; ?>
 
-        <form method="post" class="admin-form">
-            <input type="hidden" name="csrf_token" value="<?= adminEscape(adminCsrfToken()) ?>">
-            <button class="button primary full-width" type="submit">Send test email</button>
-        </form>
-        <a class="login-public-link" href="dashboard">Return to dashboard</a>
+        <?php if ($isAdmin): ?>
+            <form method="post" class="admin-form">
+                <input type="hidden" name="csrf_token" value="<?= adminEscape(adminCsrfToken()) ?>">
+                <button class="button primary full-width" type="submit">Send test email</button>
+            </form>
+            <a class="login-public-link" href="dashboard">Return to dashboard</a>
+        <?php else: ?>
+            <a class="login-public-link" href="index">Sign in to the admin area</a>
+        <?php endif; ?>
     </main>
 </body>
 </html>
