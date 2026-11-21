@@ -48,6 +48,8 @@ For local or shared hosting with external SMTP, set the SMTP host, port, encrypt
 
 Wasmer's built-in email uses `SMTP_TRANSPORT=sendmail` and does not require SMTP login credentials. It does require `enable_email: true` in `app.yaml` and a paid plan. Set a valid `SMTP_FROM_EMAIL`, `SMTP_FROM_NAME`, `SMTP_SUPPORT_EMAIL`, and `SMTP_SUPPORT_PHONE` in the Wasmer app environment; the sender address should belong to a domain you control. The current public KABC contact details are prefilled in `app.yaml`.
 
+To test external SMTP configuration, a signed-in admin can open `/admin/test_email` and send one test message to the address shown on that page. It requires `SMTP_TRANSPORT=smtp`; detailed failures are written to the PHP/server error log. A successful result means the SMTP server accepted the message, not that it reached the inbox.
+
 ### Uploads
 
 Uploaded menu images are saved under `uploads/` by default. Set `UPLOAD_DIR` and `UPLOAD_URL_PATH` for persistent storage. On Wasmer, `UPLOAD_DIR=/data/uploads` with the `uploads` volume provides persistent image storage. Uploads are limited to 5 MB and accept JPG, PNG, GIF, and WEBP.
