@@ -10,6 +10,7 @@ $recipient = 'ndayizeyekevin6@gmail.com';
 $isAdmin = !empty($_SESSION['admin_user_id']);
 $config = [];
 $errorMessage = $isAdmin ? '' : 'Sign in to the admin area before testing email settings.';
+$errorDetails = '';
 $successMessage = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -58,7 +59,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
             }
             error_log('SMTP configuration test failed: ' . $logMessage);
-            $errorMessage = 'The test email could not be sent. Check the server error log for details; credentials are not shown on this page.';
+            $errorDetails = $logMessage;
+            $errorMessage = 'The test email could not be sent. Credentials are redacted from the diagnostic details.';
         }
     }
 }
@@ -87,7 +89,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <p class="muted">This sends one test message to <?= adminEscape($recipient) ?> using the SMTP settings configured for this application. It does not display your credentials.</p>
 
         <?php if ($errorMessage !== ''): ?>
-            <div class="notice error" role="alert"><?= adminEscape($errorMessage) ?></div>
+            <div class="notice error" role="alert">
+                <p><?= adminEscape($errorMessage) ?></p>
+                <?php if ($errorDetails !== ''): ?>
+                    <p><strong>Diagnostic details:</strong> <?= adminEscape($errorDetails) ?></p>
+                <?php endif; ?>
+            </div>
         <?php endif; ?>
         <?php if ($successMessage !== ''): ?>
             <div class="notice info" role="status"><?= adminEscape($successMessage) ?></div>
