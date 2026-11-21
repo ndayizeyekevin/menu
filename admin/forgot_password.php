@@ -94,7 +94,7 @@ try {
                     }
                 }
 
-                $resetRequestMessage = 'For security, we can’t confirm whether an account uses that address. If it does and the email service accepts delivery, a reset link will arrive. If you don’t receive one, contact support.';
+                $resetRequestMessage = 'If an account uses that address and email delivery succeeds, a reset link will be sent. Check your inbox; the link expires in one hour. If no email arrives, contact support.';
             }
         }
     }
@@ -111,7 +111,7 @@ try {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Forgot password | KABC Hotel</title>
     <script src="../assets/js/admin_theme.js?v=2"></script>
-    <link rel="stylesheet" href="../assets/css/admin.css?v=11">
+    <link rel="stylesheet" href="../assets/css/admin.css?v=12">
     <link rel="icon" type="image/png" href="../assets/images/icon.png">
 </head>
 <body class="login-page">
@@ -125,13 +125,13 @@ try {
         </a>
         <p class="eyebrow">KABC HOTEL ADMIN</p>
         <h1>Forgot your password?</h1>
-        <p class="muted">Enter the email address linked to your admin account. For security, we can’t confirm whether an account uses that address.</p>
+        <p class="muted">Enter the email address linked to your admin account. We’ll process the request without revealing whether the address is registered.</p>
 
         <?php if ($errorMessage !== ''): ?>
             <div class="notice error" role="alert"><?= adminEscape($errorMessage) ?></div>
         <?php endif; ?>
         <?php if ($resetRequestMessage !== ''): ?>
-            <div class="notice" role="status"><?= adminEscape($resetRequestMessage) ?></div>
+            <div class="notice info" role="status"><?= adminEscape($resetRequestMessage) ?></div>
         <?php endif; ?>
 
         <form method="post" class="admin-form">
