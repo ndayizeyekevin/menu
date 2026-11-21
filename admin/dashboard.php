@@ -103,12 +103,12 @@ $flash = $flash ?? adminConsumeFlash();
             <article class="admin-card">
                 <h2>Manage menu</h2>
                 <p class="muted">Update item names, descriptions, and prices.</p>
-                <a class="button primary" href="menu.php">Open menu management</a>
+                <a class="button primary" href="menu">Open menu management</a>
             </article>
             <article class="admin-card">
                 <h2>Upload images</h2>
                 <p class="muted">Add or replace photos shown on the public menu.</p>
-                <a class="button primary" href="menu_image_upload.php">Upload a menu image</a>
+                <a class="button primary" href="menu_image_upload">Upload a menu image</a>
             </article>
         </section>
     </main>

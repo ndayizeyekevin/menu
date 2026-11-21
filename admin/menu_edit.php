@@ -53,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     ':menu_id' => $menuId,
                 ]);
                 adminSetFlash('Menu item updated successfully.');
-                header('Location: menu.php');
+                header('Location: menu');
                 exit;
             } catch (PDOException $e) {
                 error_log('Unable to update menu item: ' . $e->getMessage());
@@ -88,7 +88,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <h1>Edit menu item</h1>
                 <p class="muted">Changes apply to the public menu. Item ID: <?= (int) $menuId ?></p>
             </div>
-            <a class="button" href="menu.php">Back to menu items</a>
+            <a class="button" href="menu">Back to menu items</a>
         </header>
 
         <?php if ($errorMessage !== ''): ?>

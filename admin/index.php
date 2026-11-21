@@ -125,7 +125,7 @@ try {
                             $_SESSION['admin_username'] = $user['username'];
                             $db->prepare('UPDATE admin_users SET last_login_at = NOW() WHERE id = :id')
                                 ->execute([':id' => $user['id']]);
-                            header('Location: dashboard.php');
+                            header('Location: dashboard');
                             exit;
                         }
 
@@ -137,7 +137,7 @@ try {
                     session_regenerate_id(true);
                     $_SESSION['admin_user_id'] = $userId;
                     $_SESSION['admin_username'] = $username;
-                    header('Location: dashboard.php');
+                    header('Location: dashboard');
                     exit;
                 }
             }
@@ -156,7 +156,7 @@ if ($landingLoginAttempt && !$setupMode && $errorMessage !== '') {
 }
 
 if (!empty($_SESSION['admin_user_id'])) {
-    header('Location: dashboard.php');
+    header('Location: dashboard');
     exit;
 }
 $passwordResetNotice = $_SESSION['admin_password_reset_notice'] ?? '';
@@ -215,7 +215,7 @@ unset($_SESSION['admin_password_reset_notice']);
             <button class="button primary full-width" type="submit"><?= $setupMode ? 'Create admin account' : 'Sign in' ?></button>
         </form>
         <?php if (!$setupMode): ?>
-            <a class="login-public-link" href="forgot_password.php">Forgot your password?</a>
+            <a class="login-public-link" href="forgot_password">Forgot your password?</a>
         <?php endif; ?>
         <br>
         <a class="login-public-link" href="../full_menu">View public menu</a>

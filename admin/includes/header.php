@@ -2,14 +2,15 @@
     <strong class="topbar-title">
         <?php
         $topbarTitles = [
-            'dashboard.php' => 'Dashboard',
-            'menu.php' => 'Menu Management',
-            'menu_edit.php' => 'Menu Management',
-            'menu_image_upload.php' => 'Menu Management',
-            'login_logs.php' => 'Login Activity',
-            'change_password.php' => 'Account Settings',
+            'dashboard' => 'Dashboard',
+            'menu' => 'Menu Management',
+            'menu_edit' => 'Menu Management',
+            'menu_image_upload' => 'Menu Management',
+            'login_logs' => 'Login Activity',
+            'change_password' => 'Account Settings',
         ];
-        echo adminEscape($topbarTitles[basename($_SERVER['SCRIPT_NAME'])] ?? 'KABC Hotel Admin');
+        $currentPage = pathinfo(basename($_SERVER['SCRIPT_NAME']), PATHINFO_FILENAME);
+        echo adminEscape($topbarTitles[$currentPage] ?? 'KABC Hotel Admin');
         ?>
     </strong>
     <div class="admin-topbar-actions">
@@ -23,7 +24,7 @@
                 <span class="admin-account-name"><?= adminEscape($_SESSION['admin_username'] ?? 'Admin') ?></span>
             </div>
             <div class="admin-account-menu">
-                <a href="change_password.php"><i class="fa-solid fa-gear" aria-hidden="true"></i>Settings</a>
+                <a href="change_password"><i class="fa-solid fa-gear" aria-hidden="true"></i>Settings</a>
                 <form action="<?= adminEscape(rtrim(dirname($_SERVER['SCRIPT_NAME']), '/') . '/logout') ?>" method="post">
                     <input type="hidden" name="csrf_token" value="<?= adminEscape(adminCsrfToken()) ?>">
                     <button type="submit"><i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i>Sign out</button>
