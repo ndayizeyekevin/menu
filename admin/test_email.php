@@ -21,36 +21,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         try {
             $config = loadSmtpConfig();
-            if ($config['transport'] !== 'smtp') {
-                throw new RuntimeException('SMTP test requires SMTP_TRANSPORT=smtp.');
-            }
-
             $mailer = new PHPMailer(true);
-            $mailer->isSMTP();
-            $mailer->Host = $config['host'];
-            $mailer->Port = $config['port'];
-            $mailer->SMTPAuth = true;
-            $mailer->Username = $config['username'];
-            $mailer->Password = $config['password'];
-            $mailer->SMTPSecure = $config['secure'] === 'ssl'
-                ? PHPMailer::ENCRYPTION_SMTPS
-                : PHPMailer::ENCRYPTION_STARTTLS;
+            if ($config['transport'] === 'smtp') {
+                $mailer->isSMTP();
+                $mailer->Host = $config['host'];
+                $mailer->Port = $config['port'];
+                $mailer->SMTPAuth = true;
+                $mailer->Username = $config['username'];
+                $mailer->Password = $config['password'];
+                $mailer->SMTPSecure = $config['secure'] === 'ssl'
+                    ? PHPMailer::ENCRYPTION_SMTPS
+                    : PHPMailer::ENCRYPTION_STARTTLS;
+            } elseif ($config['transport'] === 'sendmail') {
+                $mailer->isSendmail();
+                $mailer->Sendmail = $config['sendmail_path'];
+            } else {
+                throw new RuntimeException('Email transport configuration is invalid.');
+            }
             $mailer->SMTPDebug = 0;
             $mailer->Timeout = 15;
             $mailer->CharSet = PHPMailer::CHARSET_UTF8;
             $mailer->setFrom($config['from_email'], $config['from_name']);
             $mailer->addAddress($recipient);
-            $mailer->Subject = 'KABC Hotel SMTP configuration test';
+            $mailer->Subject = 'KABC Hotel email transport test';
             $mailer->Body = "This is a test email from the KABC Hotel application.\n"
-                . "If you received it, the configured SMTP server accepted the message.";
+                . "If you received it, the configured email transport accepted the message.";
             $mailer->AltBody = $mailer->Body;
 
             if (!$mailer->send()) {
-                throw new RuntimeException('The SMTP server did not accept the test email.');
+                throw new RuntimeException('The configured email transport did not accept the test email.');
             }
 
-            error_log('SMTP configuration test email accepted by the SMTP server.');
-            $successMessage = 'The SMTP server accepted the test email. Check the recipient inbox and spam folder.';
+            error_log('Email transport test accepted by configured transport: ' . $config['transport'] . '.');
+            $successMessage = 'The configured email transport accepted the test email. Check the recipient inbox and spam folder.';
         } catch (Throwable $e) {
             $logMessage = $e->getMessage();
             foreach (['username', 'password'] as $credentialKey) {
@@ -58,7 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $logMessage = str_replace($config[$credentialKey], '[redacted]', $logMessage);
                 }
             }
-            error_log('SMTP configuration test failed: ' . $logMessage);
+            error_log('Email transport test failed: ' . $logMessage);
             $errorDetails = $logMessage;
             $errorMessage = 'The test email could not be sent. Credentials are redacted from the diagnostic details.';
         }
@@ -70,7 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Test SMTP | KABC Hotel</title>
+    <title>Test Email | KABC Hotel</title>
     <script src="../assets/js/admin_theme.js?v=2"></script>
     <link rel="stylesheet" href="../assets/css/admin.css?v=12">
     <link rel="icon" type="image/png" href="../assets/images/icon.png">
@@ -85,8 +88,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <img src="../assets/images/icon.png" alt="KABC Hotel">
         </a>
         <p class="eyebrow">KABC HOTEL ADMIN</p>
-        <h1>Test SMTP settings</h1>
-        <p class="muted">This sends one test message to <?= adminEscape($recipient) ?> using the SMTP settings configured for this application. It does not display your credentials.</p>
+        <h1>Test email settings</h1>
+        <p class="muted">This sends one test message to <?= adminEscape($recipient) ?> using the email transport configured for this application. It does not display your credentials.</p>
 
         <?php if ($errorMessage !== ''): ?>
             <div class="notice error" role="alert">
