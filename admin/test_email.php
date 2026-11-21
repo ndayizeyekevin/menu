@@ -33,8 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     ? PHPMailer::ENCRYPTION_SMTPS
                     : PHPMailer::ENCRYPTION_STARTTLS;
             } elseif ($config['transport'] === 'sendmail') {
-                $mailer->isSendmail();
-                $mailer->Sendmail = $config['sendmail_path'];
+                $mailer->isMail();
             } else {
                 throw new RuntimeException('Email transport configuration is invalid.');
             }
