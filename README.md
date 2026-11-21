@@ -44,7 +44,7 @@ Database configuration accepts both `DB_NAME` (used by Wasmer) and `DB_DATABASE`
 
 ### Email delivery
 
-For local or shared hosting with external SMTP, set the SMTP host, port, encryption mode, username, password, and sender details in the private `.env` file. The public room-enquiry form and admin password-reset email both require a working email configuration. Room enquiries are sent to `reservations@kabchotel.rw`.
+For local or shared hosting with external SMTP, set the SMTP host, port, encryption mode, username, password, and sender details in the private `.env` file. The app uses `config/smtp.php` when present and falls back to the tracked, environment-based `config/smtp.example.php`, so production does not need a copied secret config file. The public room-enquiry form and admin password-reset email both require a working email configuration. Room enquiries are sent to `reservations@kabchotel.rw`.
 
 Wasmer's built-in email uses `SMTP_TRANSPORT=sendmail` and does not require SMTP login credentials. It does require `enable_email: true` in `app.yaml` and a paid plan. Set a valid `SMTP_FROM_EMAIL`, `SMTP_FROM_NAME`, `SMTP_SUPPORT_EMAIL`, and `SMTP_SUPPORT_PHONE` in the Wasmer app environment; the sender address should belong to a domain you control. The current public KABC contact details are prefilled in `app.yaml`.
 
